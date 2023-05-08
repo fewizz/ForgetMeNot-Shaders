@@ -93,35 +93,6 @@ void main() {
 	vec3 sceneSpacePosBack = setupSceneSpacePos(texcoord, particles_depth);
 	vec3 sceneSpacePos = setupSceneSpacePos(texcoord, translucent_depth);
 
-	vec3 viewDirRefracted = refract(viewDir, material.fragNormal - material.vertexNormal, 1.0 / 1.333);
-	vec2 refractCoord = mix(texcoord, sceneSpaceToScreenSpace(sceneSpacePosBack + viewDirRefracted).xy, clamp01(sign(particles_depth - translucent_depth)));
-
-	vec4 main_color = texture(u_main_color, refractCoord);
-	float main_depth = texture(u_main_depth, texcoord).r;
-
-	float max_depth = max(max(translucent_depth, particles_depth), main_depth);
-	float min_depth = min(min(translucent_depth, particles_depth), main_depth);
-
-	vec3 maxSceneSpacePos = setupSceneSpacePos(texcoord, max_depth);
-	vec3 minSceneSpacePos = setupSceneSpacePos(texcoord, min_depth);
-
-	// ----------------------------------------------------------------------------------------------------
-	// Fabulous blending
-	vec3 composite = main_color.rgb;
-	float composite_depth = main_depth;
-	composite = mix(composite, translucent_color.rgb, translucent_color.a * getClosestDepth(translucent_depth, composite_depth) * step(material.isWater, 0.5)); // that last part disables water blending
-	composite = mix(composite, particles_color.rgb, particles_color.a * getClosestDepth(particles_depth, composite_depth));
-	composite = mix(composite, entity_color.rgb, entity_color.a * getClosestDepth(entity_depth, composite_depth));
-
-	sceneSpacePosBack = setupSceneSpacePos(texcoord, main_depth);
-	sceneSpacePos = setupSceneSpacePos(texcoord, composite_depth);
-
-	// ----------------------------------------------------------------------------------------------------
-	// Water normals and blending
-
-	// Initialize fog transmittance used for bloomy fog
-	float fogTransmittance = 1.0;
-
 	if(material.isWater > 0.5 || frx_cameraInWater == 1) {
 		#ifdef REALISTIC_WATER
 			// NORMALS
@@ -163,12 +134,58 @@ void main() {
 			waterNoise += smoothHashDXY(uv * vec2(5.0, 3.5) + 600.0 - waterWindDirection * 1.0) * 0.065;
 
 			waterNoise *= pow(dot(-material.vertexNormal, viewDir), 1.0 / 4.0);
-			waterNoise *= 0.1;
+			waterNoise *= 0.5;
 
 			material.fragNormal = tbn * normalize(
 				cross(vec3(2.0, 0.0, waterNoise.x), vec3(0.0, 2.0, waterNoise.y))
 			);
 		#endif
+	}
+
+	vec3 viewDirRefracted[3] = vec3[3](
+		refract(viewDir, material.fragNormal - material.vertexNormal, 1.0 / 1.100),
+		refract(viewDir, material.fragNormal - material.vertexNormal, 1.0 / 1.300),
+		refract(viewDir, material.fragNormal - material.vertexNormal, 1.0 / 1.500)
+	);
+
+	vec2 refractCoord[3] = vec2[3](
+		mix(texcoord, sceneSpaceToScreenSpace(sceneSpacePosBack + viewDirRefracted[0]).xy, clamp01(sign(particles_depth - translucent_depth))),
+		mix(texcoord, sceneSpaceToScreenSpace(sceneSpacePosBack + viewDirRefracted[1]).xy, clamp01(sign(particles_depth - translucent_depth))),
+		mix(texcoord, sceneSpaceToScreenSpace(sceneSpacePosBack + viewDirRefracted[2]).xy, clamp01(sign(particles_depth - translucent_depth)))
+	);
+
+	vec4 main_color = vec4(
+		texture(u_main_color, refractCoord[0]).r,
+		texture(u_main_color, refractCoord[1]).g,
+		texture(u_main_color, refractCoord[2]).b,
+		1.0
+	);
+	float main_depth = texture(u_main_depth, texcoord).r;
+
+	float max_depth = max(max(translucent_depth, particles_depth), main_depth);
+	float min_depth = min(min(translucent_depth, particles_depth), main_depth);
+
+	vec3 maxSceneSpacePos = setupSceneSpacePos(texcoord, max_depth);
+	vec3 minSceneSpacePos = setupSceneSpacePos(texcoord, min_depth);
+
+	// ----------------------------------------------------------------------------------------------------
+	// Fabulous blending
+	vec3 composite = main_color.rgb;
+	float composite_depth = main_depth;
+	composite = mix(composite, translucent_color.rgb, translucent_color.a * getClosestDepth(translucent_depth, composite_depth) * step(material.isWater, 0.5)); // that last part disables water blending
+	composite = mix(composite, particles_color.rgb, particles_color.a * getClosestDepth(particles_depth, composite_depth));
+	composite = mix(composite, entity_color.rgb, entity_color.a * getClosestDepth(entity_depth, composite_depth));
+
+	sceneSpacePosBack = setupSceneSpacePos(texcoord, main_depth);
+	sceneSpacePos = setupSceneSpacePos(texcoord, composite_depth);
+
+	// ----------------------------------------------------------------------------------------------------
+	// Water normals and blending
+
+	// Initialize fog transmittance used for bloomy fog
+	float fogTransmittance = 1.0;
+
+	if(material.isWater > 0.5 || frx_cameraInWater == 1) {
 
 		// BLENDING
 
