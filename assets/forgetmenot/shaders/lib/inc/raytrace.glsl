@@ -78,8 +78,7 @@ bool raytrace(in vec3 pos_win, in vec3 dir_ws, in int steps, in sampler2D depths
 			hitPos.xy = (itexel + 0.5) / frxu_size;
 			hitPos.z = mix(upper_depth, prev_z, step(upper_depth, prev_z));
 
-			float depth_d = abs(linearizeDepth(hitPos.z) - linearizeDepth(upper_depth));
-			return hitPos.z < 1.0 && depth_d < mix(2.0, 10.0, linearstep(10.0, 40.0, linearDepth));
+			return 1.0/(upper_depth-1.0)-1.0/(hitPos.z-1.0) < 1.0;
 		}
 		// restore position to hit point
 		dist_xy *= (upper_depth - prev_z) / (z - prev_z);
