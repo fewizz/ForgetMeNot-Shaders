@@ -2,7 +2,8 @@
 	"layers": [
 		{
 			"fragmentSource": "minecraft:shaders/material/api_impl/sss.frag",
-			"vertexSource": "canvas:shaders/material/leaves.vert"
+			"vertexSource": "canvas:shaders/material/leaves.vert",
+			"depthVertexSource": "canvas:shaders/material/leaves.vert"
 		}
 	],
 	"disableDiffuse": true,
