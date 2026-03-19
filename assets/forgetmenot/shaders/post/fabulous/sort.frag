@@ -172,18 +172,19 @@ void main() {
 		float waterFogDistance = length(sceneSpacePos);
 		vec3 waterFogColor = WATER_COLOR;
 
-		composite *= mix(normalize(waterFogColor), vec3(1.0), exp(-waterFogDistance * 0.2));
-		composite = mix(waterFogColor * atmosphereBrightness * 1.5, composite, exp(-waterFogDistance * WATER_DIRT_AMOUNT));
-
 		vec3 refractedViewDir = refract(viewDir, material.fragNormal, 1.33);
 
-		if(solidDepth == 1.0) composite = textureLod(u_skybox, refractedViewDir, 0.0).rgb;
-		if(refractedViewDir.y <= 0.001 && material.isWater > 0.5) {
-			composite = waterFogColor;
+		if(solidDepth == 1.0 && refractedViewDir.y >= 0.001 && material.isWater > 0.5) {
+			composite = textureLod(u_skybox, refractedViewDir, 0.0).rgb;
+		}
+		else if(material.isWater > 0.5) {
+			composite = waterFogColor * atmosphereBrightness * 3.0;
 			material.f0 = 0.95;
 		}
-
-		composite = mix(composite, waterFogColor, floor(compositeDepth));
+		else {
+			composite *= mix(normalize(waterFogColor), vec3(1.0), exp(-waterFogDistance * 0.2));
+			composite = mix(waterFogColor * atmosphereBrightness * 1.5, composite, exp(-waterFogDistance * WATER_DIRT_AMOUNT));
+		}
 	} else if(material.isWater > 0.5) {
 		// These should eventually be configurable
 		float waterFogDistance = distance(sceneSpacePosBack, sceneSpacePos);
