@@ -6,9 +6,7 @@ Contains the raytracer from lomo, provided by fewizz.
 
 bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float depth) {
 	const int power_of_two = 2;
-	const int last_level = 4;
-
-	vec2 dir_xy = dir.xy / length(dir.xy);
+	const int last_level = 8;
 
 	int level = last_level;
 
@@ -38,17 +36,15 @@ bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float d
 
 		vec3 advance; {
 			int cell_size = 1 << (level * power_of_two); // 1, 4, 16, etc...
-			vec2 position_in_cell = mod(pos.xy * sign(dir_xy), cell_size);
+			vec2 position_in_cell = mod(pos.xy * sign(dir.xy), cell_size);
 			vec2 dists_to_axis = cell_size - position_in_cell;
-			vec2 diagonal_dists = dists_to_axis / abs(dir_xy);
-			float dist_xy = max(min(diagonal_dists.x, diagonal_dists.y), 0.001) * 1.001;
-			advance = dist_xy * vec3(dir_xy, dir.z / length(dir.xy));
+			vec2 diagonal_dists = dists_to_axis / abs(dir.xy);
+			float dist = min(diagonal_dists.x, diagonal_dists.y);
+			advance = max(dist, 0.001) * 1.001 * dir;
 		}
 
-		pos += advance;
-
-		if (pos.z >= depth) { // we hit the depth while advancing
-			pos.xy -= advance.xy * (pos.z - depth) / advance.z; // go back
+		if (pos.z + advance.z >= depth) { // we hit the depth while advancing
+			pos.xy += advance.xy * ((depth - pos.z) / advance.z); // go back
 			pos.z = depth;
 			if (level == 0) {
 				return true;
@@ -56,6 +52,7 @@ bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float d
 			--level;
 		}
 		else {
+			pos += advance;
 			level = last_level;
 		}
 	}
