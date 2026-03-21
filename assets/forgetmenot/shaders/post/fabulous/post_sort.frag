@@ -108,7 +108,7 @@ void reflections(
 		bool hit = raytrace(
 			windowSpacePos,
 			windowSpaceDir,
-			40,
+			80,
 			hiDepthLevels,
 			hitDepth
 		);

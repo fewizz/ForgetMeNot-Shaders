@@ -5,55 +5,44 @@ Contains the raytracer from lomo, provided by fewizz.
 */
 
 bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float depth) {
-	const int power_of_two = 2;
 	const int last_level = 8;
+	const int level_step = 2;
 
-	int level = last_level;
+	int level = 0;
 
-	while(true) {
-		if (
-			steps <= 0
-			|| any(greaterThanEqual(pos.xy, frxu_size))
-			|| any(lessThan(pos.xy, vec2(0.0)))
-			|| pos.z <= 0.0
-		) {
-			return false;
-		}
-		--steps;
-
-		while (true) {
-			depth = texelFetch(depths, ivec2(pos.xy) >> (level*power_of_two), level*power_of_two).r;
-			if (pos.z >= depth) {
-				if (level == 0) {
-					return true;
-				}
-				--level;
-			}
-			else {
-				break;
-			}
-		}
+	while (
+		steps-- > 0
+		&& all(lessThan(pos.xy, frxu_size))
+		&& all(greaterThanEqual(pos.xy, vec2(0.0)))
+		&& pos.z > 0.0
+	) {
+		depth = texelFetch(depths, ivec2(pos.xy) >> level, level).r;
 
 		vec3 advance; {
-			int cell_size = 1 << (level * power_of_two); // 1, 4, 16, etc...
+			int cell_size = 1 << level; // 1, 4, 16, etc...
 			vec2 position_in_cell = mod(pos.xy * sign(dir.xy), cell_size);
 			vec2 dists_to_axis = cell_size - position_in_cell;
 			vec2 diagonal_dists = dists_to_axis / abs(dir.xy);
 			float dist = min(diagonal_dists.x, diagonal_dists.y);
-			advance = max(dist, 0.001) * 1.001 * dir;
+			advance = max(dist, 0.01) * 1.01 * dir;
 		}
 
-		if (pos.z + advance.z >= depth) { // we hit the depth while advancing
-			pos.xy += advance.xy * ((depth - pos.z) / advance.z); // go back
-			pos.z = depth;
-			if (level == 0) {
+		if (pos.z + advance.z >= depth) {
+			pos += advance * max((depth - pos.z) / advance.z, 0.0); // go back
+			if (level > 0) {
+				level -= level_step;
+			}
+			else {
 				return true;
 			}
-			--level;
 		}
 		else {
 			pos += advance;
-			level = last_level;
+			if (level < last_level) {
+				level += level_step;
+			}
 		}
 	}
+
+	return false;
 }
