@@ -35,9 +35,8 @@ layout(location = 1) out vec4 fragDepth;
 // Used for blending: 1.0 if a > b, else 0.0
 // Update b to the closer of the two depths
 float getClosestDepth(in float a, inout float b) {
-	float isACloser = step(a, b);
-	b = mix(b, min(a, b), isACloser);
-
+	float isACloser = depthIsReversed ? step(-a, -b) : step(a, b);
+	b = mix(b, depthIsReversed ? max(a, b) : min(a, b), isACloser);
 	return isACloser;
 }
 
@@ -93,10 +92,10 @@ void main() {
 	vec4 solidColor; 
 	float solidDepth = texture(u_solid_depth, texcoord).r;
 
-	float refractedDepthBack = 1.0;
-	float refractedDepthFront = 1.0;
+	float refractedDepthBack = depthFar;
+	float refractedDepthFront = depthFar;
 	
-	if(solidDepth < 1.0 && material.fragNormal != material.vertexNormal) {
+	if((depthIsReversed ? solidDepth > depthFar : solidDepth < depthFar) && material.fragNormal != material.vertexNormal) {
 		const float angleMultiplier[3] = float[3](
 			1.1, 1.3, 1.5
 		);
@@ -114,7 +113,7 @@ void main() {
 				refractCoord = mix(
 					texcoord,
 					sceneSpaceToScreenSpace(sceneSpacePosBackRefracted).xy,
-					clamp01(sign(solidDepth - translucentDepth))
+					clamp01(sign(solidDepth - translucentDepth)*(depthIsReversed ? -1 : 1))
 				);
 
 				solidColor[channel] = texture(u_solid_color, refractCoord)[channel];
@@ -133,7 +132,7 @@ void main() {
 				refractCoord = mix(
 					texcoord,
 					sceneSpaceToScreenSpace(sceneSpacePosBack + viewDirRefracted * normDiffLength * 4.0).xy,
-					clamp01(sign(solidDepth - translucentDepth))
+					clamp01(sign(solidDepth - translucentDepth)*(depthIsReversed ? -1 : 1))
 				);
 
 				solidColor[channel] = texture(u_solid_color, refractCoord)[channel];
@@ -174,7 +173,7 @@ void main() {
 
 		vec3 refractedViewDir = refract(viewDir, material.fragNormal, 1.33);
 
-		if(solidDepth == 1.0 && refractedViewDir.y >= 0.001 && material.isWater > 0.5) {
+		if(solidDepth == depthFar && refractedViewDir.y >= 0.001 && material.isWater > 0.5) {
 			composite = textureLod(u_skybox, refractedViewDir, 0.0).rgb;
 		}
 		else if(material.isWater > 0.5) {

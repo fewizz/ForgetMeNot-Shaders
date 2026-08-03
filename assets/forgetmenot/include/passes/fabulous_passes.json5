@@ -99,40 +99,40 @@
 				lod: 0
 			},
 			{
-				name: "hi_depth_levels_2",
+				name: "hi_depth_levels_1",
 				program: "depth_downsample",
-				framebuffer: "hi_depth_levels_2",
+				framebuffer: "hi_depth_levels_1",
 				samplerImages: [
 					"hi_depth_levels"
 				],
-				lod: 2
+				lod: 1
 			},
 			{
-				name: "hi_depth_levels_4",
+				name: "hi_depth_levels_3",
 				program: "depth_downsample",
-				framebuffer: "hi_depth_levels_4",
+				framebuffer: "hi_depth_levels_3",
 				samplerImages: [
 					"hi_depth_levels"
 				],
-				lod: 4
+				lod: 3
 			},
 			{
-				name: "hi_depth_levels_6",
+				name: "hi_depth_levels_5",
 				program: "depth_downsample",
-				framebuffer: "hi_depth_levels_6",
+				framebuffer: "hi_depth_levels_5",
 				samplerImages: [
 					"hi_depth_levels"
 				],
-				lod: 6
+				lod: 5
 			},
 			{
-				name: "hi_depth_levels_8",
+				name: "hi_depth_levels_7",
 				program: "depth_downsample",
-				framebuffer: "hi_depth_levels_8",
+				framebuffer: "hi_depth_levels_7",
 				samplerImages: [
 					"hi_depth_levels"
 				],
-				lod: 8
+				lod: 7
 			}
 		]
 	}

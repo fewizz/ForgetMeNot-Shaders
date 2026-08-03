@@ -6,6 +6,7 @@ Contains the diffuse lighting function as well as some other lighting utilities.
 
 #include forgetmenot:shaders/lib/inc/sky_display.glsl
 #include forgetmenot:shaders/lib/inc/cubemap.glsl
+#include forgetmenot:shaders/lib/inc/space.glsl
 
 // Lighting should only be in the fragment shader; requires things like IGN
 #ifdef FRAGMENT_SHADER
@@ -84,7 +85,7 @@ vec3 setupShadowPos(in vec3 sceneSpacePos, in vec3 normal, out int cascade) {
 	#endif
 
 	vec4 shadowClipPos = frx_shadowProjectionMatrix(cascade) * shadowViewPos;
-	vec3 shadowScreenPos = (shadowClipPos.xyz / shadowClipPos.w) * 0.5 + 0.5;
+	vec3 shadowScreenPos = clipToScreenSpacePos(shadowClipPos);
 
 	return shadowScreenPos;
 }

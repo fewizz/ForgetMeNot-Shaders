@@ -149,7 +149,7 @@ void main() {
 		}
 	#endif
 
-	if(depth < 1.0) {
+	if(depthIsReversed ? depth > depthFar : depth < depthFar) {
 		#ifdef RTAO
 			vec2 rtaoSample = texture(u_ambient_occlusion, texcoord).rg;
 		#else

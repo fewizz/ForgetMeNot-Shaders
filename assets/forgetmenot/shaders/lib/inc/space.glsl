@@ -4,16 +4,50 @@
 Contains utility functions for space conversions.
 */
 
+#if defined CANPIPE_REVERSED_DEPTH
+const bool depthIsReversed = true;
+const float depthFar = 0.0;
+const float depthNear = 1.0;
+#else
+const bool depthIsReversed = false;
+const float depthFar = 1.0;
+const float depthNear = 0.0;
+#endif
+
+#if defined CANPIPE_Z_ZERO_TO_ONE
+const bool depthRangeIsZeroToOne = true;
+#else
+const bool depthRangeIsZeroToOne = false;
+#endif
+
+vec3 screenToClipSpacePos(vec3 screenSpacePos) {
+	if (depthRangeIsZeroToOne) {
+		return vec3(screenSpacePos.xy * 2.0 - 1.0, screenSpacePos.z);
+	}
+	else {
+		return screenSpacePos * 2.0 - 1.0;
+	}
+}
+
+vec3 clipToScreenSpacePos(vec4 clipSpacePos) {
+	if (depthRangeIsZeroToOne) {
+		return vec3((clipSpacePos.xy / clipSpacePos.w) * 0.5 + 0.5, clipSpacePos.z / clipSpacePos.w);
+	}
+	else {
+		return (clipSpacePos.xyz / clipSpacePos.w) * 0.5 + 0.5;
+	}
+}
+
 // General function to convert screen space to any other space
 vec3 fromScreenSpace(in vec3 screenSpacePos, in mat4 matrix) {
-	vec3 clipSpacePos = screenSpacePos * 2.0 - 1.0;
+	vec3 clipSpacePos = screenToClipSpacePos(screenSpacePos);
 	vec4 temp = matrix * vec4(clipSpacePos, 1.0);
 	return temp.xyz / temp.w; 
 }
 // General function to convert any other space back to screen space
 vec3 toScreenSpace(in vec3 pos, in mat4 matrix) {
 	vec4 temp = matrix * vec4(pos, 1.0);
-	return (temp.xyz / temp.w) * 0.5 + 0.5;
+	return clipToScreenSpacePos(temp);
 }
 
 // Scene space - camera origin, world space axes
@@ -87,6 +121,6 @@ float delinearizeDepth(in float depth) {
 	// View direction in world space
 	vec3 getViewDir() {
 		vec2 screenUv = gl_FragCoord.xy / frxu_size.xy;
-		return normalize(setupSceneSpacePos(screenUv, 1.0));
+		return normalize(setupSceneSpacePos(screenUv, depthFar));
 	}
 #endif

@@ -39,7 +39,7 @@ void reflections(
 	in vec3 sceneSpacePos,
 	in vec3 viewDir
 ) {
-	if(!(depth < 1.0 && (material.roughness < 0.3 || material.f0 > 0.99))) {
+	if(!((depthIsReversed ? depth > depthFar : depth < depthFar) && (material.roughness < 0.3 || material.f0 > 0.99))) {
 		return;
 	}
 
@@ -86,22 +86,22 @@ void reflections(
 		float prevFrameDepth = texelFetch(hiDepthLevels, ivec2(screenSpacePos.xy*frxu_size), 0).r;
 
 		// TODO some threshold?
-		screenSpacePos.z = min(screenSpacePos.z, prevFrameDepth);
+		screenSpacePos.z = depthIsReversed ? max(screenSpacePos.z, prevFrameDepth) : min(screenSpacePos.z, prevFrameDepth);
 
-		vec3 NDC = screenSpacePos * 2.0 - 1.0;
+		vec3 NDC = screenToClipSpacePos(screenSpacePos);
 		vec4 D = frx_lastProjectionMatrix * vec4(viewReflectDir, 0.0);
 		vec3 windowSpaceDir = normalize(
-			(D.xyz - NDC.xyz * D.w) * vec3(frxu_size, 1.0)
+			(D.xyz - NDC.xyz * D.w) * vec3(frxu_size, depthRangeIsZeroToOne ? 2.0 : 1.0)
 		);
 		vec3 windowSpacePos = screenSpacePos * vec3(frxu_size, 1.0);
 
 		float flDnl = 0.5 / max(max(abs(windowSpaceDir.x), abs(windowSpaceDir.y)), 0.000001);
 
-		windowSpacePos.z -= abs(windowSpaceDir.z) * flDnl * 1.1;
-		windowSpacePos.z -= 0.000001;
+		windowSpacePos.z += abs(windowSpaceDir.z) * flDnl * 1.1 * (depthIsReversed ? 1.0 : -1.0);
+		windowSpacePos.z += 0.000001 * (depthIsReversed ? 1.0 : -1.0);
 		windowSpacePos.xy =
 			floor(windowSpacePos.xy) + vec2(0.5)
-			+ (sign(windowSpaceDir.xy) * 0.5 - (windowSpaceDir.xy * flDnl)) * float(windowSpaceDir.z > 0.0);
+			+ (sign(windowSpaceDir.xy) * 0.5 - (windowSpaceDir.xy * flDnl)) * float(depthIsReversed ? windowSpaceDir.z < 0.0 : windowSpaceDir.z > 0.0);
 
 		float hitDepth;
 
@@ -113,7 +113,7 @@ void reflections(
 			hitDepth
 		);
 
-		hit = hit && 1.0/(1.0-windowSpacePos.z)-1.0/(1.0-hitDepth) < 48.0;
+		hit = hit && 1.0/abs(depthFar-windowSpacePos.z)-1.0/abs(depthFar-hitDepth) < 48.0 && hitDepth != 0;
 
 		if(hit) {
 			reflectColor += texelFetch(reflectionColorSampler, ivec2(windowSpacePos.xy), 0).rgb / numReflectionRays;
@@ -242,7 +242,7 @@ void main() {
 	vec3 sceneSpacePos = setupSceneSpacePos(texcoord, depth);
 	vec3 viewDir = getViewDir();
 
-	if(depth != 1.0) {
+	if(depth != depthFar) {
 		reflections(
 			color,
 			u_previous_color,

@@ -91,7 +91,7 @@ void main() {
 		vec3 lastScreenPos = lastFrameSceneSpaceToScreenSpace(viewPos + positionDifference);
 
 		// Fixes hand smearing
-		lastScreenPos = mix(lastScreenPos, screenPos, step(handDepth, 0.99));
+		lastScreenPos = mix(lastScreenPos, screenPos, depthIsReversed ? step(-handDepth, -0.99) : step(handDepth, 0.99));
 
 		color.rgb = toneMap(color.rgb);
 		previousColor = textureCatmullRom(u_previous_frame, lastScreenPos.xy, vec2(frxu_size));

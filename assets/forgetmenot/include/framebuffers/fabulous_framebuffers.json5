@@ -5,20 +5,20 @@
 			colorAttachments: [{image: "hi_depth_levels", lod: 0}]
 		},
 		{
-			name: "hi_depth_levels_2",
-			colorAttachments: [{image: "hi_depth_levels", lod: 2}]
+			name: "hi_depth_levels_1",
+			colorAttachments: [{image: "hi_depth_levels", lod: 1}]
 		},
 		{
-			name: "hi_depth_levels_4",
-			colorAttachments: [{image: "hi_depth_levels", lod: 4}]
+			name: "hi_depth_levels_3",
+			colorAttachments: [{image: "hi_depth_levels", lod: 3}]
 		},
 		{
-			name: "hi_depth_levels_6",
-			colorAttachments: [{image: "hi_depth_levels", lod: 6}]
+			name: "hi_depth_levels_5",
+			colorAttachments: [{image: "hi_depth_levels", lod: 5}]
 		},
 		{
-			name: "hi_depth_levels_8",
-			colorAttachments: [{image: "hi_depth_levels", lod: 8}]
+			name: "hi_depth_levels_7",
+			colorAttachments: [{image: "hi_depth_levels", lod: 7}]
 		},
 		{
 			name: "sky_display",

@@ -8,6 +8,7 @@
 	thunderSmoothingFrames: 500,
 	enablePBR: true,
 	runVanillaClear: true,
+	awareOfDepthRangeChanges: true,
 
 	include: [
 		"forgetmenot:include/pipeline/options.json5",

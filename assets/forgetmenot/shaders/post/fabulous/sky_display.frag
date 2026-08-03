@@ -17,13 +17,13 @@ layout(location = 0) out vec4 fragColor;
 void main() {
 	initGlobals();
 
-	if(texture(u_solid_depth, texcoord).r != 1.0) {
+	if(texture(u_solid_depth, texcoord).r != depthFar) {
 		fragColor = vec4(0.0);
 		return;
 	}
 
 	vec2 jitteredCoord = gl_FragCoord.xy;
-	vec3 viewDir = normalize(setupSceneSpacePos(jitteredCoord / frxu_size, 1.0));
+	vec3 viewDir = normalize(setupSceneSpacePos(jitteredCoord / frxu_size, depthFar));
 
 	fragColor.rgb = getSkyAndClouds(
 		viewDir,

@@ -14,9 +14,9 @@ bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float d
 		steps-- > 0
 		&& all(lessThan(pos.xy, frxu_size))
 		&& all(greaterThanEqual(pos.xy, vec2(0.0)))
-		&& pos.z > 0.0
+		&& (depthIsReversed ? pos.z < depthNear : pos.z > depthNear)
 	) {
-		depth = texelFetch(depths, ivec2(pos.xy) >> level, level).r;
+		depth = texelFetch(depths, ivec2(pos.xy) >> level, max(0, level-1)).r;
 
 		vec3 advance; {
 			int cell_size = 1 << level; // 1, 4, 16, etc...
@@ -27,7 +27,7 @@ bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float d
 			advance = max(dist, 0.01) * 1.01 * dir;
 		}
 
-		if (pos.z + advance.z >= depth) {
+		if (depthIsReversed ? pos.z + advance.z <= depth : pos.z + advance.z >= depth) {
 			pos += advance * max((depth - pos.z) / advance.z, 0.0); // go back
 			if (level > 0) {
 				level -= level_step;
