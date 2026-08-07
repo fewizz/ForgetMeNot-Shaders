@@ -258,6 +258,10 @@ void frx_pipelineFragment() {
 		);
 	}
 
+	#if defined CANPIPE_TERRAIN
+		color = mix(frx_fogColor * vec4(vec3(1.0), color.a), color, canpipe_chunkVisibility);
+	#endif
+
 	vec3 vertexNormalUnorm = frx_vertexNormal * 0.5 + 0.5;
 	vec3 fragNormalUnorm = frx_fragNormal * 0.5 + 0.5;
 
