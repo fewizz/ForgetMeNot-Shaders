@@ -42,7 +42,7 @@ void initGlobals() {
 
 	// Setting atmosphere parameters
 
-	if(frx_worldIsOverworld == 0) {
+	if (frx_worldIsOverworld == 0) {
 		fmn_atmosphereParams = AtmosphereParams(-0.15, 1200.0);
 		return;
 	}

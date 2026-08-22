@@ -15,8 +15,8 @@ void main() {
 
 	vec2 size = textureSize(u_color, luminanceLod);
 
-	for(int x = 0; x < size.x; x++) {
-		for(int y = 0; y < size.y; y++) {
+	for (int x = 0; x < size.x; x++) {
+		for (int y = 0; y < size.y; y++) {
 			float currentSample = frx_luminance(texelFetch(u_color, ivec2(x, y), luminanceLod).rgb);
 			currentSample = min(currentSample, 2.0);
 
@@ -29,5 +29,5 @@ void main() {
 	float prevLuminance = texelFetch(u_previous, ivec2(0), 0).r;
 
 	float smoothingFactor = 1.0 - exp(-1.0 / 30.0);
-	if(frx_renderFrames > 1u) avgLuminance = max(0.0, mix(prevLuminance, avgLuminance, smoothingFactor));
+	if (frx_renderFrames > 1u) avgLuminance = max(0.0, mix(prevLuminance, avgLuminance, smoothingFactor));
 }

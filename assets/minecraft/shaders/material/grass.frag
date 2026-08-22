@@ -15,13 +15,13 @@ void frx_materialFragment() {
 	bool isGrass = distance(vec3(luminance), frx_sampleColor.rgb) < 0.1;
 
 	#ifdef PBR_ENABLED
-		if(isGrass) {
+		if (isGrass) {
 			frx_fragRoughness = 0.5 + 0.3 * luminance;
 			frx_fragReflectance = 0.04;
 
 
 			#if FMN_PBR >= 3
-				if(!isGrassBlock()) {
+				if (!isGrassBlock()) {
 					fmn_sssAmount = 1.0;
 				}
 

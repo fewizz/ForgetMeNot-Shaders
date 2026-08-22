@@ -15,8 +15,8 @@ void main() {
 
 	float depth = depthFar;
 
-	for(int x = 0; x < cell_size; ++x) {
-		for(int y = 0; y < cell_size; ++y) {
+	for (int x = 0; x < cell_size; ++x) {
+		for (int y = 0; y < cell_size; ++y) {
 			ivec2 prev_pos = ivec2(gl_FragCoord.xy) << power_of_two;
 			prev_pos += ivec2(x, y);
 			if (any(greaterThanEqual(prev_pos, prev_texture_size))) {

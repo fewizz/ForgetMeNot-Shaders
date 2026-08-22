@@ -3,7 +3,7 @@
 void frx_pipelineVertex() {
 	initGlobals();
 
-	if(frx_modelOriginScreen) {
+	if (frx_modelOriginScreen) {
 		gl_Position = frx_guiViewProjectionMatrix * frx_vertex;
 		frx_distance = 0.0;
 	} else {
@@ -14,6 +14,6 @@ void frx_pipelineVertex() {
 	}
 
 	#ifdef TAA
-		if(!frx_isGui || frx_isHand) gl_Position.xy += getTaaOffset(frx_renderFrames) * (1.0 / vec2(frx_viewWidth, frx_viewHeight)) * gl_Position.w;
+		if (!frx_isGui || frx_isHand) gl_Position.xy += getTaaOffset(frx_renderFrames) * (1.0 / vec2(frx_viewWidth, frx_viewHeight)) * gl_Position.w;
 	#endif
 }

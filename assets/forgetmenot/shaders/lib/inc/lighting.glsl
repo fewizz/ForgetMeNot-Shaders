@@ -40,9 +40,9 @@ int selectShadowCascade(vec4 shadowViewSpacePos) {
 	vec3 d2 = shadowDist(2, shadowViewSpacePos);
 	vec3 d1 = shadowDist(1, shadowViewSpacePos);
 
-	if(all(lessThan(d3, vec3(1.0)))) { return 3; }
-	if(all(lessThan(d2, vec3(1.0)))) { return 2; }
-	if(all(lessThan(d1, vec3(1.0)))) { return 1; }
+	if (all(lessThan(d3, vec3(1.0)))) { return 3; }
+	if (all(lessThan(d2, vec3(1.0)))) { return 2; }
+	if (all(lessThan(d1, vec3(1.0)))) { return 1; }
 
 	return 0;
 }
@@ -111,10 +111,10 @@ float getShadowFactor(
 	float shadowFactor = 0.0;
 	float penumbraSize = 0.0;
 
-	if(doPcss) {
+	if (doPcss) {
 		int pcssSamples = shadowMapSamples * 1;
 
-		for(int i = 0; i < pcssSamples; i++) {
+		for (int i = 0; i < pcssSamples; i++) {
 			vec2 sampleOffset = diskSampling(i, pcssSamples, sqrt(interleavedGradient(i + pcssSamples)) * TAU) * (250.0 / cascadeDistance(cascade));
 
 			// Double the sample offset for penumbra search
@@ -132,7 +132,7 @@ float getShadowFactor(
 	penumbraSize = max(1.0, penumbraSize);
 	penumbraSize = mix(penumbraSize, 250.0 / cascadeDistance(cascade), sssAmount * step(dot(vertexNormal, frx_skyLightVector), 0.25));
 
-	for(int i = 0; i < shadowMapSamples; i++) {
+	for (int i = 0; i < shadowMapSamples; i++) {
 		vec2 sampleOffset = diskSampling(i, shadowMapSamples, sqrt(interleavedGradient(i)) * TAU) * penumbraSize / shadowSampleOffsetFactor;
 		shadowFactor += texture(shadowMap, vec4(shadowScreenPos.xy + sampleOffset, cascade, shadowScreenPos.z)) / shadowMapSamples;
 	}
@@ -152,7 +152,7 @@ vec3 getSunLightColor(
 		// Samples sun transmittance directly rather than using the skybox
 		vec3 directLightColor = 8.0 * getValFromTLUT(transmittanceLut, skyViewPos + vec3(0.0, 0.00002, 0.0) * max(0.0, (sceneSpacePos + frx_cameraPos).y - 60.0), frx_skyLightVector);
 
-		if(frx_worldIsMoonlit == 1) {
+		if (frx_worldIsMoonlit == 1) {
 			directLightColor = nightAdjust(directLightColor);
 		}
 	#endif
@@ -191,12 +191,12 @@ vec3 getSkyLightColor(
 		ambientLighting *= (fragNormal.y * 0.5 + 0.5) * 0.25 + 0.75;
 	#endif
 
-	if(frx_worldIsNether == 1) {
+	if (frx_worldIsNether == 1) {
 		#ifdef NETHER_DIFFUSE
 			ambientLighting *= 2.0;
 			ambientLighting += vec3(4.0, 1.5, 0.0) * (clamp01(-fragNormal.y * 0.75 + 0.25)) * ambientOcclusion;
 		#endif
-	} else if(frx_worldIsEnd == 1) {
+	} else if (frx_worldIsEnd == 1) {
 		ambientLighting *= 0.1;
 	}
 
@@ -221,7 +221,7 @@ vec3 getHandheldLightColor(
 		float innerAngle = sin(frx_heldLightInnerRadius);
 		float outerAngle = sin(frx_heldLightOuterRadius);
 
-		if(innerAngle != 0.0) {
+		if (innerAngle != 0.0) {
 
 			vec4 viewSpacePos = frx_viewMatrix * vec4(pos, 1.0);
 			//float blockDistance = max(0.0, -viewSpacePos.z);
@@ -284,7 +284,7 @@ vec3 basicLighting(
 ) {
 	//blockLight *= blockLight;
 	skyLight *= skyLight;
-	if(frx_worldHasSkylight == 0) skyLight = 1.0;
+	if (frx_worldHasSkylight == 0) skyLight = 1.0;
 
 	float emission = clamp01(frx_luminance(albedo) - 1.0);
 
@@ -303,7 +303,7 @@ vec3 basicLighting(
 	float shadowFactor = 0.0;
 
 	// Direct lighting
-	if(frx_worldHasSkylight == 1) {
+	if (frx_worldHasSkylight == 1) {
 		directLighting = directLightColor;
 		directLighting *= (1.0 - 0.9 * fmn_rainFactor);
 
@@ -344,7 +344,7 @@ vec3 basicLighting(
 
 	totalLighting += directLighting + ambientLighting;
 
-	if(AMBIENT_BRIGHTNESS != 0.0) {
+	if (AMBIENT_BRIGHTNESS != 0.0) {
 		// Tiny point light around the player so caves aren't completely dark
 		totalLighting = max(totalLighting, vec3(0.05 * (1.0 - skyLight)) * exp(-length((sceneSpacePos + frx_cameraPos - frx_eyePos - vec3(0.0, 1.0, 0.0)) * 0.75)));
 	}
@@ -354,7 +354,7 @@ vec3 basicLighting(
 
 	vec3 color = albedo * (totalLighting + emission);
 
-	if(isWater > 0.5) {
+	if (isWater > 0.5) {
 		return color;
 	}
 

@@ -13,7 +13,7 @@ layout(location = 0) out vec4 fragColor;
 vec4 blur(in int samples, in float radius, in vec4 centerColor, in float centerDepth, in vec3 centerNormal) {
 	vec4 result = vec4(0.0);
 
-	for(int i = 0; i < samples; i++) {
+	for (int i = 0; i < samples; i++) {
 		vec2 sampleOffset = diskSampling(i, samples, 0.0);
 		vec2 sampleCoord = texcoord + sampleOffset * radius / frxu_size;
 

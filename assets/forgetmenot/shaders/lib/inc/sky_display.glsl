@@ -102,11 +102,11 @@ CloudLayer createCirrusCloudLayer(in vec3 viewDir) {
 }
 
 float sampleCloudNoise(in CloudLayer cloudLayer, in int noiseOctaves) {
-	if(!cloudLayer.render) {
+	if (!cloudLayer.render) {
 		return 0.0;
 	}
 
-	if(cloudLayer.useNoiseTexture) {
+	if (cloudLayer.useNoiseTexture) {
 		return -1.0;
 	}
 
@@ -127,11 +127,11 @@ float sampleCloudNoise(in CloudLayer cloudLayer) {
 	return sampleCloudNoise(cloudLayer, cloudLayer.noiseOctaves);
 }
 float sampleCloudNoise(in CloudLayer cloudLayer, in sampler2D noiseTexture) {
-	if(!cloudLayer.render) {
+	if (!cloudLayer.render) {
 		return 0.0;
 	}
 
-	if(!cloudLayer.useNoiseTexture) {
+	if (!cloudLayer.useNoiseTexture) {
 		return -1.0;
 	}
 
@@ -143,7 +143,7 @@ float sampleCloudNoise(in CloudLayer cloudLayer, in sampler2D noiseTexture) {
 }
 
 vec2 getCloudsTransmittanceAndScattering(in vec3 viewDir, in CloudLayer cloudLayer) {
-	if(rayIntersectSphere(skyViewPos, viewDir, groundRadiusMM) > 0.0) {
+	if (rayIntersectSphere(skyViewPos, viewDir, groundRadiusMM) > 0.0) {
 		return vec2(1.0, 0.0);
 	}
 
@@ -154,7 +154,7 @@ vec2 getCloudsTransmittanceAndScattering(in vec3 viewDir, in CloudLayer cloudLay
 	float transmittance = exp2(-noise * cloudLayer.density);
 	float scattering = 0.75;
 
-	if(cloudLayer.selfShadowSteps > 0) {
+	if (cloudLayer.selfShadowSteps > 0) {
 		vec2 temp = viewDir.xz * rcp(viewDir.y);
 		float skyLightZenithAngle = rcp(abs(frx_skyLightVector.y));
 		vec2 sunLightDirection = mix(
@@ -169,7 +169,7 @@ vec2 getCloudsTransmittanceAndScattering(in vec3 viewDir, in CloudLayer cloudLay
 
 		int selfShadowCloudDetail = max(1, cloudLayer.selfShadowSteps - 1);
 
-		for(int i = 0; i < cloudLayer.selfShadowSteps; i++) {
+		for (int i = 0; i < cloudLayer.selfShadowSteps; i++) {
 			cloudLayer.plane += sunLightDirection * rcp(cloudLayer.selfShadowSteps) * interleavedGradient(i) * 0.5;
 			lightOpticalDepth += sampleCloudNoise(cloudLayer, selfShadowCloudDetail) * rcp(cloudLayer.selfShadowSteps);
 		}
@@ -197,11 +197,11 @@ vec3 getSkyColor(
 	in sampler2D skyLutNight,
 	in sampler2D moonTexture
 ) {
-	if(fmn_isModdedDimension) {
+	if (fmn_isModdedDimension) {
 		return pow(frx_fogColor.rgb, vec3(2.2));
 	}
 
-	if(frx_worldIsOverworld == 1) {
+	if (frx_worldIsOverworld == 1) {
 		vec3 sunVector = getSunVector();
 		vec3 moonVector = getMoonVector();
 
@@ -228,7 +228,7 @@ vec3 getSkyColor(
 		vec3 dayColor = dayColorSample + sun;
 		vec3 nightColor = nightColorSample + moon;
 
-		if(renderStars) {
+		if (renderStars) {
 			vec3 starViewDir = viewDir;
 			starViewDir.xy = rotate2D(starViewDir.xy, -frx_skyAngleRadians);
 			starViewDir.y = abs(starViewDir.y);
@@ -251,9 +251,9 @@ vec3 getSkyColor(
 		vec3 result = 40.0 * (dayColor + nightColor);
 
 		return result * (1.0 + 9.0 * frx_skyFlashStrength);
-	} else if(frx_worldIsNether == 1) {
+	} else if (frx_worldIsNether == 1) {
 		return normalize(pow(frx_fogColor.rgb, vec3(2.2))) * 0.4 + 0.075;
-	} else if(frx_worldIsEnd == 1) {
+	} else if (frx_worldIsEnd == 1) {
 		vec3 skyColor = vec3(0.0);
 
 		vec2 plane = viewDir.xz / (abs(viewDir.y + length(viewDir.xz) * 0.3));
@@ -263,7 +263,7 @@ vec3 getSkyColor(
 		vec3 stars = vec3(0.0);
 		vec3 starColor = normalize(hash32(floor(plane)) + 0.001);
 
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			float brightness = 1.0 + 10.0 * hash12(vec2(i) + floor(plane));
 			stars += brightness * step(0.95 - 0.03 * i, 1.0 - cellular2x2x2(viewDir * 40.0 * (1.0 + i * 0.1)).x);
 		}
@@ -277,7 +277,7 @@ vec3 getSkyColor(
 		stars = vec3(0.0);
 		starColor *= vec3(0.5, 1.5, 0.9);
 
-		for(int i = 0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			int j = i + 3;
 
 			float brightness = 1.0 + 10.0 * hash12(vec2(j) + floor(plane));
@@ -357,7 +357,7 @@ vec3 getClouds(
 
 	in vec3 skyColor
 ) {
-	if(frx_worldHasSkylight == 0 || fmn_isModdedDimension) {
+	if (frx_worldHasSkylight == 0 || fmn_isModdedDimension) {
 		return skyColor;
 	}
 
@@ -424,7 +424,7 @@ vec3 getSkyAndClouds(
 		moonTexture
 	);
 
-	if(frx_worldHasSkylight == 1) {
+	if (frx_worldHasSkylight == 1) {
 		CloudLayer cirrusClouds = createCirrusCloudLayer(viewDir);
 		CloudLayer cumulusClouds = createCumulusCloudLayer(viewDir);
 
@@ -483,7 +483,7 @@ vec3 getSkyAndClouds(
 		moonTexture
 	);
 
-	if(frx_worldHasSkylight == 1) {
+	if (frx_worldHasSkylight == 1) {
 		CloudLayer cirrusClouds = createCirrusCloudLayer(viewDir);
 		CloudLayer cumulusClouds = createCumulusCloudLayer(viewDir);
 

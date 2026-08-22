@@ -64,7 +64,7 @@ ParallaxResult waterParallax(in mat3 tbn, in vec3 sceneSpacePos, in vec2 uv) {
 
 	int safetyCount = 0;
 	int safetyLimit = int(maxLayers + 0.5);
-	while(currentLayerDepth < currentHeight && safetyCount++ < safetyLimit) {
+	while (currentLayerDepth < currentHeight && safetyCount++ < safetyLimit) {
 		currentUv -= deltaUv;
 		currentHeight = getWaterHeight(currentUv, 3);
 

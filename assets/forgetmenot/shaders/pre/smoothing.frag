@@ -14,7 +14,7 @@ void main() {
 	float result = 0.0;
 	float smoothingFrames = 15.0;
 
-	switch(index.x) {
+	switch (index.x) {
 		case 0: {
 			result = float(frx_effectBlindness);
 			break;

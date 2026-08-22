@@ -39,7 +39,7 @@ void reflections(
 	in vec3 sceneSpacePos,
 	in vec3 viewDir
 ) {
-	if(!((depthIsReversed ? depth > depthFar : depth < depthFar) && (material.roughness < 0.3 || material.f0 > 0.99))) {
+	if (!((depthIsReversed ? depth > depthFar : depth < depthFar) && (material.roughness < 0.3 || material.f0 > 0.99))) {
 		return;
 	}
 
@@ -57,7 +57,7 @@ void reflections(
 
 	// Attempts to fix nonsense normals
 	// Shifts the fragment normal to be more aligned with the vertex normal until the reflection is possible
-	for(int i = 0; i < 10 && dot(cleanReflectDir, material.vertexNormal) < 0.0; i++) {
+	for (int i = 0; i < 10 && dot(cleanReflectDir, material.vertexNormal) < 0.0; i++) {
 		material.fragNormal = normalize(material.fragNormal + material.vertexNormal * 0.5);
 		cleanReflectDir = reflect(viewDir, material.fragNormal);
 	}
@@ -65,7 +65,7 @@ void reflections(
 	vec3 reflectance = getReflectance(vec3(material.f0 * material.f0), clamp01(dot(-material.fragNormal, viewDir)), material.roughness);
 
 	vec3 ambientReflectionColor = WATER_COLOR * atmosphereBrightness;
-	if(frx_cameraInWater == 0) {
+	if (frx_cameraInWater == 0) {
 		ambientReflectionColor = textureLod(skyboxSampler, cleanReflectDir, 7.0 * rcp(inversesqrt(material.roughness))).rgb * material.skyLight;
 	}
 
@@ -76,7 +76,7 @@ void reflections(
 	numReflectionRays *= int(step(material.roughness, 0.5));
 
 	float reflectionFactor = 0.0;
-	for(int i = 0; i < numReflectionRays; i++) {
+	for (int i = 0; i < numReflectionRays; i++) {
 		vec3 reflectDir = mix(cleanReflectDir, generateCosineVector(material.fragNormal), pow2(material.roughness));
 		vec3 viewReflectDir = mat3(frx_lastViewMatrix) * reflectDir;
 
@@ -115,7 +115,7 @@ void reflections(
 
 		hit = hit && 1.0/abs(depthFar-windowSpacePos.z)-1.0/abs(depthFar-hitDepth) < 48.0 && hitDepth != 0;
 
-		if(hit) {
+		if (hit) {
 			reflectColor += texelFetch(reflectionColorSampler, ivec2(windowSpacePos.xy), 0).rgb / numReflectionRays;
 			reflectionFactor += 1.0 / numReflectionRays;
 		}
@@ -162,7 +162,7 @@ float getVolumetricLightFactor(in vec3 sceneSpacePos, in vec3 viewDir) {
 	vec3 rayStep = (endPos - startPos) / float(volumetricLightSteps);
 
 	float volumetricLightFactor = 0.0;
-	for(int i = 0; i < volumetricLightSteps; i++) {
+	for (int i = 0; i < volumetricLightSteps; i++) {
 		rayPos += rayStep * interleavedGradient(i);
 
 		float shadowFactor = getShadowFactor(
@@ -197,11 +197,11 @@ vec3 getAerialPerspective(in vec3 viewDir, in float blockDistance) {
 		mieAmount = getVolumetricLightFactor(viewDir * blockDistance, viewDir);
 	#endif
 
-	if(tdata.x + tdata.z > 0.0) {
+	if (tdata.x + tdata.z > 0.0) {
 		color += raymarchScattering(skyViewPos, viewDir, getSunVector(), tMax, raymarchSteps, mieAmount, u_transmittance, u_multiscattering);
 	}
 
-	if(tdata.y + tdata.z > 0.0) {
+	if (tdata.y + tdata.z > 0.0) {
 		color += nightAdjust(raymarchScattering(skyViewPos, viewDir, getMoonVector(), tMax, raymarchSteps, mieAmount, u_transmittance, u_multiscattering));
 	}
 
@@ -215,11 +215,11 @@ vec3 getVolumetricLight(in vec3 sceneSpacePos, in vec3 viewDir, in float depth) 
 
 	vec3 vlColor = 8.0 * getValFromTLUT(u_transmittance, skyViewPos, frx_skyLightVector);
 
-	if(frx_worldIsMoonlit == 1) {
+	if (frx_worldIsMoonlit == 1) {
 		vlColor = nightAdjust(vlColor);
 	}
 
-	if(frx_cameraInWater == 1) {
+	if (frx_cameraInWater == 1) {
 		vlColor *= normalize(WATER_COLOR);
 	}
 
@@ -242,7 +242,7 @@ void main() {
 	vec3 sceneSpacePos = setupSceneSpacePos(texcoord, depth);
 	vec3 viewDir = getViewDir();
 
-	if(depth != depthFar) {
+	if (depth != depthFar) {
 		reflections(
 			color,
 			u_previous_color,
@@ -257,18 +257,18 @@ void main() {
 		float blockDistance = length(sceneSpacePos);
 
 		// Fog
-		if(!fmn_isModdedDimension) {
+		if (!fmn_isModdedDimension) {
 			vec3 scattering = vec3(0.0);
 
 			float fogMultiplier = mix(1.0 + 2.0 * frx_smoothedEyeBrightness.y, 15.0, float(frx_worldIsNether));
 			fogMultiplier = mix(fogMultiplier, 0.0, float(frx_cameraInWater));
 			float transmittance = exp(-blockDistance / fmn_atmosphereParams.blocksPerFogUnit * fogMultiplier);
 
-			if(frx_worldIsOverworld == 1) {
+			if (frx_worldIsOverworld == 1) {
 				float undergroundFactor = linearstep(0.0, 0.5, frx_smoothedEyeBrightness.y);
 				undergroundFactor = mix(1.0, undergroundFactor, float(frx_worldHasSkylight));
 
-				if(undergroundFactor > 0.01) {
+				if (undergroundFactor > 0.01) {
 					scattering = getAerialPerspective(viewDir, blockDistance);
 				}
 
@@ -287,7 +287,7 @@ void main() {
 
 	//#define VOLUMETRIC_LIGHT
 	#ifdef VOLUMETRIC_LIGHT
-		if(frx_worldHasSkylight == 1) {
+		if (frx_worldHasSkylight == 1) {
 			vec3 volumetricLight = getVolumetricLight(sceneSpacePos, viewDir, depth);
 			color += volumetricLight;
 		}

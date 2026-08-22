@@ -20,8 +20,8 @@ ExposureProfile getEndExposureProfile() {
 }
 
 ExposureProfile getExposureProfile() {
-	if(frx_worldIsNether == 1) return getNetherExposureProfile();
-	if(frx_worldIsEnd == 1) return getEndExposureProfile();
+	if (frx_worldIsNether == 1) return getNetherExposureProfile();
+	if (frx_worldIsEnd == 1) return getEndExposureProfile();
 	return getOverworldExposureProfile();
 }
 

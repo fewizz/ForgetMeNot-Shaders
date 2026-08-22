@@ -47,7 +47,7 @@ Hit raytraceAo(vec3 rayPos, vec3 rayDir, int raytraceLength) {
 	ivec3 voxelPos = ivec3(floor(rayPos));
 	vec3 currentPos = rayPos;
 
-	for(int i = 0; i < raytraceLength; i++) {
+	for (int i = 0; i < raytraceLength; i++) {
 		float closestDist = min(nextDist.x, min(nextDist.y, nextDist.z));
 
 		currentPos += rayDir * closestDist;
@@ -61,7 +61,7 @@ Hit raytraceAo(vec3 rayPos, vec3 rayDir, int raytraceLength) {
 
 		hit.normal = stepAxis;
 
-		if(evaluateHit(voxelPos)) {
+		if (evaluateHit(voxelPos)) {
 			hit.pos = currentPos - frx_cameraPos;
 			hit.normal *= -stepDir;
 			hit.success = true;
@@ -77,7 +77,7 @@ void main() {
 
 	float depth = texture(u_depth, texcoord).r;
 
-	if(depth != 1.0) {
+	if (depth != 1.0) {
 		uvec3 packedSample = texture(u_material_data, texcoord).xyz;
 		Material material = unpackMaterial(packedSample);
 
@@ -101,16 +101,16 @@ void main() {
 
 		vec3 rayPos = sceneSpacePos + material.vertexNormal * 0.01;
 
-		for(int i = 0; i < numAoRays; i++) {
+		for (int i = 0; i < numAoRays; i++) {
 			vec3 rayDir = generateCosineVector(material.vertexNormal);
 
 			Hit hit = raytraceAo(rayPos, rayDir, aoRange + 1);
-			if(hit.success) {
+			if (hit.success) {
 				float distToHit = distance(hit.pos, rayPos);
 				float aoDistanceFactor = smoothstep(float(aoRange), float(aoRange - 1), distToHit);
 
 				#ifdef INDIRECT_SUNLIGHT
-					if(i < numSunBounceRays) {
+					if (i < numSunBounceRays) {
 						sunBounceAmount += getShadowFactor(
 							hit.pos,
 							hit.normal,
@@ -143,7 +143,7 @@ void main() {
 		float depthTolerance = 0.1 + 0.1 * length(sceneSpacePos);
 		disocclusion = disocclusion || abs(linearizeDepth(depth) - linearizeDepth(previousDepth)) > depthTolerance;
 
-		if(!disocclusion) {
+		if (!disocclusion) {
 			result = mix(result, previousResult, 0.9);
 		}
 

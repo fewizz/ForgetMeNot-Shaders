@@ -62,7 +62,7 @@ const Hit NO_HIT = Hit(vec3(0.0), vec3(0.0), false);
 		ivec3 voxelPos = ivec3(rayPos);
 		vec3 currentPos = rayPos;
 
-		for(int i = 0; i < raytraceLength; i++) {
+		for (int i = 0; i < raytraceLength; i++) {
 			float closestDist = min(nextDist.x, min(nextDist.y, nextDist.z));
 
 			currentPos += rayDir * closestDist;
@@ -76,7 +76,7 @@ const Hit NO_HIT = Hit(vec3(0.0), vec3(0.0), false);
 
 			hit.normal = stepAxis;
 
-			if(hitSnow(hit, voxelPos)) {
+			if (hitSnow(hit, voxelPos)) {
 				hit.pos = currentPos - frx_cameraPos * voxelScale;
 				hit.normal *= -stepDir;
 				break;
@@ -105,7 +105,7 @@ void main() {
 	vec3 viewDir = getViewDir();
 	vec3 sceneSpacePos = setupSceneSpacePos(texcoord, depth);
 
-	if(fmn_isModdedDimension) {
+	if (fmn_isModdedDimension) {
 		color = mix(color, pow(color, vec3(2.2)), floor(depth));
 		fragColor = vec4(color, 1.0);
 		return;
@@ -116,21 +116,21 @@ void main() {
 	Material material = unpackMaterial(packedSample);
 
 	// #ifdef REALISTIC_METALS
-	// 	if(material.f0 > 0.999) {
+	// 	if (material.f0 > 0.999) {
 	// 		fragColor = vec4(color, 1.0);
 	// 		return;
 	// 	}
 	// #endif
 
 	#ifdef FANCY_POWDER_SNOW
-		if(frx_playerEyeInSnow == 1 && !frx_isGui) {
+		if (frx_playerEyeInSnow == 1 && !frx_isGui) {
 
 			Hit hit = raytraceSnow(vec3(0.0), viewDir, 40);
 
 			hit.pos -= 0.05 * hit.normal;
 			float hitDistance = length(hit.pos / voxelScale);
 
-			if(!hit.success && hitDistance < length(sceneSpacePos.xyz + material.vertexNormal.xyz * 0.0025)) {
+			if (!hit.success && hitDistance < length(sceneSpacePos.xyz + material.vertexNormal.xyz * 0.0025)) {
 				material.blockLight = frx_eyeBrightness.x;//= vec3(frx_eyeBrightness, exp(-max(0.0, hitDistance - 0.8) * 2.0));
 				material.skyLight = frx_eyeBrightness.y;
 				material.vanillaAo = exp(-max(0.0, hitDistance - 0.9) * 2.0);
@@ -149,7 +149,7 @@ void main() {
 		}
 	#endif
 
-	if(depthIsReversed ? depth > depthFar : depth < depthFar) {
+	if (depthIsReversed ? depth > depthFar : depth < depthFar) {
 		#ifdef RTAO
 			vec2 rtaoSample = texture(u_ambient_occlusion, texcoord).rg;
 		#else
@@ -179,7 +179,7 @@ void main() {
 		);
 
 		#ifdef REALISTIC_METALS
-		if(material.f0 > 0.999) {
+		if (material.f0 > 0.999) {
 			color *= 0.5;
 		}
 		#endif

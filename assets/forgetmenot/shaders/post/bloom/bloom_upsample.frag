@@ -12,7 +12,7 @@ void main() {
 
 	vec4 current = textureLod(u_color, texcoord, frxu_lod);
 
-	if(frxu_lod < 1) {
+	if (frxu_lod < 1) {
 		current.rgb *= 2.0;
 	}
 

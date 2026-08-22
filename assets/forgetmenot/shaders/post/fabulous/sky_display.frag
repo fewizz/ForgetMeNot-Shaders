@@ -17,7 +17,7 @@ layout(location = 0) out vec4 fragColor;
 void main() {
 	initGlobals();
 
-	if(texture(u_solid_depth, texcoord).r != depthFar) {
+	if (texture(u_solid_depth, texcoord).r != depthFar) {
 		fragColor = vec4(0.0);
 		return;
 	}

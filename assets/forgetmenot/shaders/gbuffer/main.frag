@@ -30,7 +30,7 @@ vec3 getClippedWorldSpacePos() {
 }
 
 void autoGenNormal() {
-	if(
+	if (
 		fmn_autoGenNormalStrength < 0.001 ||
 		frx_fragNormal != vec3(0.0, 0.0, 1.0) || // Don't overwrite existing custom normals
 		#ifdef REALISTIC_WATER
@@ -97,7 +97,7 @@ void resolveSeasonColoring(in vec3 worldSpacePos) {
 
 void resolveLightmap() {
 	// If the current dimension is non-vanilla, use MC's lightmap.
-	if(fmn_isModdedDimension) {
+	if (fmn_isModdedDimension) {
 		lightmap = texture(frxs_lightmap, frx_vertexLight.xy).rgb;
 		lightmap *= mix(frx_vertexLight.z, 1.0, clamp01(float(frx_matDisableAo) + fmn_sssAmount));
 
@@ -108,7 +108,7 @@ void resolveLightmap() {
 }
 
 void applyRainEffects(in vec3 worldSpacePos) {
-	if(fmn_rainFactor > 0.0 && fmn_isWater == 0) {
+	if (fmn_rainFactor > 0.0 && fmn_isWater == 0) {
 		float porosity = (frx_fragRoughness) * step(frx_fragReflectance, 0.999);
 
 		float rainReflectionFactor = linearstep(0.0, 0.5, fmn_rainFactor) * step(0.95, frx_vertexNormal.y);
@@ -139,7 +139,7 @@ void applyEmission() {
 
 void applyWaterNormals() {
 	#ifdef REALISTIC_WATER
-		if(fmn_isWater == 1 || frx_cameraInWater == 1) {
+		if (fmn_isWater == 1 || frx_cameraInWater == 1) {
 			// Math from Balint
 			int face = int(dot(max(frx_vertexNormal.xyz, 0.0), vec3(FACE_EAST, FACE_UP, FACE_SOUTH)) + dot(max(-frx_vertexNormal.xyz, 0.0), vec3(FACE_WEST, FACE_DOWN, FACE_NORTH)) + 0.5);
 
@@ -196,7 +196,7 @@ void resolveMaterials() {
 	// Rain effects
 	applyRainEffects(worldSpacePos);
 
-	if(!isInventory) {
+	if (!isInventory) {
 		resolveLightmap();
 
 		#ifdef ENABLE_BLOOM
@@ -230,10 +230,10 @@ void frx_pipelineFragment() {
 	vec4 color = frx_fragColor;
 
 	// A non-vanilla dimension is loaded, we don't want to touch lighting.
-	if(fmn_isModdedDimension) {
+	if (fmn_isModdedDimension) {
 		color.rgb *= lightmap;
 		color.rgb = mix(color.rgb, pow(frx_fogColor.rgb, gamma), frx_smootherstep(frx_fogStart, frx_fogEnd, length(frx_vertex.xyz)));
-	} else if((!frx_renderTargetSolid || frx_isHand)) {
+	} else if ((!frx_renderTargetSolid || frx_isHand)) {
 		// Non-solid lighting, in vanilla dimensions only.
 		color.rgb = basicLighting(
 			color.rgb,
@@ -288,7 +288,7 @@ void frx_pipelineFragment() {
 		BITS_Z
 	);
 
-	if(color.a < 0.0001) discard;
+	if (color.a < 0.0001) discard;
 	color = max(color, vec4(0.0005));
 
 	fragColor = color;

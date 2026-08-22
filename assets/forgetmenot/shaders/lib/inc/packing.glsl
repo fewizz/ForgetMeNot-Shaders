@@ -32,27 +32,27 @@ vec4 unpackUnormArb(uint pack, const uvec4 bits) {
 uint packUnormArb3Elements(float[3] data, uint[3] bits) {
 	float[3] mul;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		mul[i] = float(1u << bits[i]) - 1.0;
 	}
 
 	uint[3] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[3] shifted;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		shifted[i] = uint(data[i] * mul[i] + 0.5) << shift[i];
 	}
 
 	uint result = 0u;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		result = result | shifted[i];
 	}
 
@@ -61,28 +61,28 @@ uint packUnormArb3Elements(float[3] data, uint[3] bits) {
 float[3] unpackUnormArb3Elements(uint pack, uint[3] bits) {
 	uint[3] maxValue;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		maxValue[i] = (1u << bits[i]) - 1u;
 	}
 
 	uint[3] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[3] unshifted;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		unshifted[i] = pack >> shift[i];
 		unshifted[i] = unshifted[i] & maxValue[i];
 	}
 
 	float[3] result;
 
-	for(int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		result[i] = float(unshifted[i]) / float(maxValue[i]);
 	}
 
@@ -92,27 +92,27 @@ float[3] unpackUnormArb3Elements(uint pack, uint[3] bits) {
 uint packUnormArb5Elements(float[5] data, uint[5] bits) {
 	float[5] mul;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		mul[i] = float(1u << bits[i]) - 1.0;
 	}
 
 	uint[5] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[5] shifted;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		shifted[i] = uint(data[i] * mul[i] + 0.5) << shift[i];
 	}
 
 	uint result = 0u;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		result = result | shifted[i];
 	}
 
@@ -121,28 +121,28 @@ uint packUnormArb5Elements(float[5] data, uint[5] bits) {
 float[5] unpackUnormArb5Elements(uint pack, uint[5] bits) {
 	uint[5] maxValue;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		maxValue[i] = (1u << bits[i]) - 1u;
 	}
 
 	uint[5] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[5] unshifted;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		unshifted[i] = pack >> shift[i];
 		unshifted[i] = unshifted[i] & maxValue[i];
 	}
 
 	float[5] result;
 
-	for(int i = 0; i < 5; i++) {
+	for (int i = 0; i < 5; i++) {
 		result[i] = float(unshifted[i]) / float(maxValue[i]);
 	}
 
@@ -152,27 +152,27 @@ float[5] unpackUnormArb5Elements(uint pack, uint[5] bits) {
 uint packUnormArb6Elements(float[6] data, uint[6] bits) {
 	float[6] mul;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		mul[i] = float(1u << bits[i]) - 1.0;
 	}
 
 	uint[6] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[6] shifted;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		shifted[i] = uint(data[i] * mul[i] + 0.5) << shift[i];
 	}
 
 	uint result = 0u;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		result = result | shifted[i];
 	}
 
@@ -181,28 +181,28 @@ uint packUnormArb6Elements(float[6] data, uint[6] bits) {
 float[6] unpackUnormArb6Elements(uint pack, uint[6] bits) {
 	uint[6] maxValue;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		maxValue[i] = (1u << bits[i]) - 1u;
 	}
 
 	uint[6] shift;
 	uint currentSum = 0u;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		shift[i] = currentSum;
 		currentSum += bits[i];
 	}
 
 	uint[6] unshifted;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		unshifted[i] = pack >> shift[i];
 		unshifted[i] = unshifted[i] & maxValue[i];
 	}
 
 	float[6] result;
 
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		result[i] = float(unshifted[i]) / float(maxValue[i]);
 	}
 

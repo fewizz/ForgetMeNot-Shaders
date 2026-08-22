@@ -73,7 +73,7 @@ float kleinNishinaPhase(float cosTheta, float g) {
 float getMiePhase(float cosTheta) {
 	return kleinNishinaPhase(cosTheta, 0.76385);
 }
-float getMiePhase(float cosTheta, float g)
+float getMiePhase(float cosTheta, float g) {
 	return kleinNishinaPhase(cosTheta, g);
 }
 

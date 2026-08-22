@@ -11,6 +11,6 @@ void main() {
 
 	vec2 scaledCoord = texcoord * 2.0;
 
-	if(clamp01(scaledCoord) == scaledCoord) fragColor = texture(u_color, scaledCoord);
+	if (clamp01(scaledCoord) == scaledCoord) fragColor = texture(u_color, scaledCoord);
 	else fragColor = vec4(0.0);
 }

@@ -95,7 +95,7 @@ void main() {
 	float refractedDepthBack = depthFar;
 	float refractedDepthFront = depthFar;
 
-	if((depthIsReversed ? solidDepth > depthFar : solidDepth < depthFar) && material.fragNormal != material.vertexNormal) {
+	if ((depthIsReversed ? solidDepth > depthFar : solidDepth < depthFar) && material.fragNormal != material.vertexNormal) {
 		const float angleMultiplier[3] = float[3](
 			1.1, 1.3, 1.5
 		);
@@ -106,7 +106,7 @@ void main() {
 			vec3 crss = normalize(cross(material.fragNormal, material.vertexNormal));
 			float angle = acos(dot(material.fragNormal, material.vertexNormal));
 
-			for(int channel = 0; channel < 3; ++channel) {
+			for (int channel = 0; channel < 3; ++channel) {
 				vec3 viewDirRefracted = rotationMatrix3D(crss, angle * angleMultiplier[channel]) * viewDir;
 				vec3 sceneSpacePosBackRefracted = sceneSpacePos + viewDirRefracted * distance(sceneSpacePosBack, sceneSpacePos);
 
@@ -122,7 +122,7 @@ void main() {
 			vec3 normDiff = material.fragNormal - material.vertexNormal;
 			float normDiffLength = length(normDiff);
 
-			for(int channel = 0; channel < 3; ++channel) {
+			for (int channel = 0; channel < 3; ++channel) {
 				vec3 viewDirRefracted = refract(
 					viewDir,
 					normDiff / normDiffLength,
@@ -167,16 +167,16 @@ void main() {
 
 	// ----------------------------------------------------------------------------------------------------
 	// Water effects
-	if(frx_cameraInWater == 1) {
+	if (frx_cameraInWater == 1) {
 		float waterFogDistance = length(sceneSpacePos);
 		vec3 waterFogColor = WATER_COLOR;
 
 		vec3 refractedViewDir = refract(viewDir, material.fragNormal, 1.33);
 
-		if(solidDepth == depthFar && refractedViewDir.y >= 0.001 && material.isWater > 0.5) {
+		if (solidDepth == depthFar && refractedViewDir.y >= 0.001 && material.isWater > 0.5) {
 			composite = textureLod(u_skybox, refractedViewDir, 0.0).rgb;
 		}
-		else if(material.isWater > 0.5) {
+		else if (material.isWater > 0.5) {
 			composite = waterFogColor * atmosphereBrightness * 3.0;
 			material.f0 = 0.95;
 		}
@@ -184,7 +184,7 @@ void main() {
 			composite *= mix(normalize(waterFogColor), vec3(1.0), exp(-waterFogDistance * 0.2));
 			composite = mix(waterFogColor * atmosphereBrightness * 1.5, composite, exp(-waterFogDistance * WATER_DIRT_AMOUNT));
 		}
-	} else if(material.isWater > 0.5) {
+	} else if (material.isWater > 0.5) {
 		// These should eventually be configurable
 		float waterFogDistance = distance(sceneSpacePosBack, sceneSpacePos);
 
