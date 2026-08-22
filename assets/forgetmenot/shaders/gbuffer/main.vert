@@ -1,4 +1,4 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
 
 void frx_pipelineVertex() {
 	initGlobals();

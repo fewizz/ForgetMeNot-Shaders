@@ -59,7 +59,7 @@ vec2 getUnjitteredTexcoord(in vec2 coord, in uint frame) {
 #include forgetmenot:shaders/lib/materials_pipeline_common.glsl
 
 // These will always be needed
-#include forgetmenot:shaders/lib/inc/utility.glsl 
-#include forgetmenot:shaders/lib/inc/general.glsl 
-#include forgetmenot:shaders/lib/inc/palette.glsl 
-#include forgetmenot:shaders/lib/inc/globals.glsl 
+#include forgetmenot:shaders/lib/inc/utility.glsl
+#include forgetmenot:shaders/lib/inc/general.glsl
+#include forgetmenot:shaders/lib/inc/palette.glsl
+#include forgetmenot:shaders/lib/inc/globals.glsl

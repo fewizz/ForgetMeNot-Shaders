@@ -116,8 +116,8 @@ void main() {
 							hit.normal,
 							0.0,
 							true,
-							4, 
-							u_shadow_tex, 
+							4,
+							u_shadow_tex,
 							u_shadow_map
 						) / numSunBounceRays * clamp01(dot(hit.normal, frx_skyLightVector)) * aoDistanceFactor * material.skyLight;
 					}
@@ -131,7 +131,7 @@ void main() {
 
 		vec3 positionDifference = frx_cameraPos - frx_lastCameraPos;
 		vec3 lastScreenPos = lastFrameSceneSpaceToScreenSpace(originalSceneSpacePos + positionDifference);
-		
+
 		vec4 previousResult = texture(u_previous_rtao, lastScreenPos.xy);
 		float previousDepth = texture(u_previous_depth, lastScreenPos.xy).r;
 		vec3 previousNormal = texture(u_previous_normal, lastScreenPos.xy).rgb;

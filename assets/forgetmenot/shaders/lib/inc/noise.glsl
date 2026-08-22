@@ -48,7 +48,7 @@ vec2 hash21(float p) {
 vec3 hash31(float p) {
 	vec3 p3 = fract(vec3(p) * vec3(.1031, .1030, .0973));
 	p3 += dot(p3, p3.yzx+33.33);
-	return fract((p3.xxy+p3.yzz)*p3.zyx); 
+	return fract((p3.xxy+p3.yzz)*p3.zyx);
 }
 
 //  3 out, 2 in...
@@ -106,7 +106,7 @@ vec2 sincos(float x) {
 	return vec2(sin(x), cos(x));
 }
 vec2 diskSampling(float i, float n, float phi) {
-	float theta = (i + phi) / n; 
+	float theta = (i + phi) / n;
 	return sincos(theta * TAU * n * 1.618033988749894) * theta;
 }
 
@@ -127,7 +127,7 @@ void pcg(inout uint seed) {
 		return rngState;
 	}
 	float randomFloat() {
-		return float(randomUint()) / float(0xffffffffu); 
+		return float(randomUint()) / float(0xffffffffu);
 	}
 
 	uint staticRandomUint() {
@@ -151,7 +151,7 @@ void pcg(inout uint seed) {
 
 	vec3 generateCosineVector(vec3 vector, float roughness) {
 		return normalize(
-			vector + 
+			vector +
 			roughness * generateUnitVector(
 				vec2(
 					randomFloat(), randomFloat()
@@ -176,17 +176,17 @@ float smoothHash(in vec2 st) {
 	// https://www.shadertoy.com/view/lsf3WH
 	vec2 i = (floor(st));
 	vec2 f = fract(st);
-		
+
 	vec2 u = f * f * (3.0 - 2.0 * f);
 
 	return mix(
 		mix(
-			hash12(i + vec2(0.0,0.0)), 
+			hash12(i + vec2(0.0,0.0)),
 			hash12(i + vec2(1.0,0.0)),
 			u.x
 		),
 		mix(
-			hash12(i + vec2(0.0,1.0)), 
+			hash12(i + vec2(0.0,1.0)),
 			hash12(i + vec2(1.0,1.0)),
 			u.x
 		),
@@ -251,7 +251,7 @@ float smoothHash(in vec3 st) {
 	// https://www.shadertoy.com/view/lsf3WH
 	vec3 i = (floor(st));
 	vec3 f = fract(st);
-		
+
 	vec3 u = f * f * (3.0 - 2.0 * f);
 
 	return mix(
@@ -332,12 +332,12 @@ vec2 smoothHashDXY(in vec2 st) {
 	// quintic interpolation
 	vec2 u = f * f * f * (f * (f * 6.0 - 15.0) + 10.0);
 	vec2 du = 30.0 * f * f * (f * (f - 2.0) + 1.0);
-	
+
 	vec2 ga = hashDXY(i + vec2(0.0, 0.0));
 	vec2 gb = hashDXY(i + vec2(1.0, 0.0));
 	vec2 gc = hashDXY(i + vec2(0.0, 1.0));
 	vec2 gd = hashDXY(i + vec2(1.0, 1.0));
-	
+
 	float va = dot(ga, f - vec2(0.0, 0.0));
 	float vb = dot(gb, f - vec2(1.0, 0.0));
 	float vc = dot(gc, f - vec2(0.0, 1.0));

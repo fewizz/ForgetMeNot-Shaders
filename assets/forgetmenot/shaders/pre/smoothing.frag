@@ -1,4 +1,4 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
 
 uniform sampler2D u_smoothing_previous;
 
@@ -8,7 +8,7 @@ layout(location = 0) out float fragColor;
 
 void main() {
 	initGlobals();
-	
+
 	ivec2 index = ivec2(gl_FragCoord.xy);
 
 	float result = 0.0;
@@ -34,7 +34,7 @@ void main() {
 			#else
 				result = 1.0;
 			#endif
-			
+
 			break;
 		}
 	}

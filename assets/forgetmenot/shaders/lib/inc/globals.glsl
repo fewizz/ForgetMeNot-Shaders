@@ -13,7 +13,7 @@ float fmn_worldTime;
 // frx_worldIsNether, and frx_worldIsEnd are true.
 bool fmn_isModdedDimension;
 
-// Block light color variable. Can't be constant because this is mutable by 
+// Block light color variable. Can't be constant because this is mutable by
 // pipeline settings and uses non-constant expressions.
 vec3 fmn_blockLightColor;
 
@@ -41,7 +41,7 @@ void initGlobals() {
 	fmn_blockLightColor = saturation(vec3(2.0, 0.98, 0.32), BLOCKLIGHT_WARMTH);
 
 	// Setting atmosphere parameters
-	 
+
 	if(frx_worldIsOverworld == 0) {
 		fmn_atmosphereParams = AtmosphereParams(-0.15, 1200.0);
 		return;
@@ -50,7 +50,7 @@ void initGlobals() {
 	// cloud coverage
 	float cloudCoverage = 0.1;
 	cloudCoverage += 0.35 * fmn_rainFactor;
-	
+
 	fmn_atmosphereParams.cloudCoverage = cloudCoverage;
 
 	// fog density

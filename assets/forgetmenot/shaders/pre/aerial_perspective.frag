@@ -1,6 +1,6 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/space.glsl 
-#include forgetmenot:shaders/lib/inc/sky.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/space.glsl
+#include forgetmenot:shaders/lib/inc/sky.glsl
 
 uniform sampler2D u_transmittance;
 uniform sampler2D u_multiscattering;
@@ -10,11 +10,11 @@ in vec2 texcoord;
 layout(location = 0) out vec4 fragColor;
 
 // Naive implementation of "froxels" (if you can even call it that).
-// Doesn't fit tightly to the frustum; just renders a volume around 
+// Doesn't fit tightly to the frustum; just renders a volume around
 // the view area for aerial perspective.
 void main() {
 	initGlobals();
-	
+
 	vec3 color = vec3(0.0);
 
 	vec3 viewDir = normalize(setupSceneSpacePos(texcoord, depthFar));

@@ -51,7 +51,7 @@ CloudLayer createCumulusCloudLayer(in vec3 viewDir) {
 	cloudLayer.noiseLacunarity = 2.5;
 	cloudLayer.noiseLowerBound = 0.35 - 0.1 * fmn_rainFactor;
 	cloudLayer.noiseUpperBound = 1.5;
-	
+
 	cloudLayer.domainMult = vec2(1.0);
 	cloudLayer.rangeMult = mix(smoothHash(cloudLayer.plane * 0.3 + frx_renderSeconds * 0.01), 1.0, smoothstep(0.2, 0.4, fmn_atmosphereParams.cloudCoverage));
 
@@ -79,7 +79,7 @@ CloudLayer createCirrusCloudLayer(in vec3 viewDir) {
 
 	cloudLayer.density = 2.0;
 	cloudLayer.selfShadowSteps = 0;
-	
+
 	cloudLayer.useNoiseTexture = false;
 
 	cloudLayer.noiseOctaves = 6;
@@ -109,7 +109,7 @@ float sampleCloudNoise(in CloudLayer cloudLayer, in int noiseOctaves) {
 	if(cloudLayer.useNoiseTexture) {
 		return -1.0;
 	}
-	
+
 	return smoothstep(
 		cloudLayer.noiseLowerBound,
 		cloudLayer.noiseUpperBound,
@@ -150,7 +150,7 @@ vec2 getCloudsTransmittanceAndScattering(in vec3 viewDir, in CloudLayer cloudLay
 	vec2 plane = cloudLayer.plane;
 
 	float noise = sampleCloudNoise(cloudLayer);
-	
+
 	float transmittance = exp2(-noise * cloudLayer.density);
 	float scattering = 0.75;
 
@@ -187,9 +187,9 @@ vec2 getCloudsTransmittanceAndScattering(in vec3 viewDir, in CloudLayer cloudLay
 }
 
 vec3 getSkyColor(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 	in vec3 sunTransmittance,
-	in vec3 moonTransmittance, 
+	in vec3 moonTransmittance,
 	in float sunBrightness,
 	in bool renderStars,
 
@@ -207,16 +207,16 @@ vec3 getSkyColor(
 
 		vec3 dayColorSample = 2.0 * getValFromSkyLUT(viewDir, sunVector, skyLutDay) * skyBrightness;
 		vec3 nightColorSample = getValFromSkyLUT(viewDir, moonVector, skyLutNight) * skyBrightness;
-		
+
 		float dist = rayIntersectSphere(skyViewPos, viewDir, groundRadiusMM);
 
 		sunBrightness *= step(dist, 0.0);
 
 		float moonRadius = 0.9998 - 0.0003 * exp(-clamp01(moonVector.y) * 10.0);
-		
+
 		vec2 moonUv;
 		float moonFactor = step(getDistanceToBox(viewDir, getMoonVector() * 2.0, getMoonVector(), moonUv), 0.25) * step(0.0, dot(viewDir, getMoonVector())); //smoothstep(moonRadius - 0.00002, moonRadius, dot(viewDir, moonVector));
-		
+
 		moonUv += 0.5;
 		moonUv = (2.0 * clamp(moonUv, 0.25, 0.75) - 0.5) * vec2(0.25, 0.5);
 
@@ -270,7 +270,7 @@ vec3 getSkyColor(
 
 		skyColor += (starColor * 0.5 + 0.5) * 0.3 * stars;
 
-		// Special stars 
+		// Special stars
 		float starDensity = exp(-abs(pow2(rotate2D(viewDir.yz, 0.6).y)) * 20.0);
 		starDensity *= smoothstep(0.0, 0.01, starDensity);
 
@@ -285,7 +285,7 @@ vec3 getSkyColor(
 		}
 
 		skyColor += starColor * 40.0 * stars * starDensity;
-		
+
 		// Fog
 		float noise = fbmHash3D(viewDir, 5, 3.0, 0.0);
 		skyColor += vec3(0.2, 0.9, 0.4) * pow4(noise) * (starDensity);
@@ -297,9 +297,9 @@ vec3 getSkyColor(
 }
 
 vec3 getSkyColor(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 	in vec3 sunTransmittance,
-	in vec3 moonTransmittance, 
+	in vec3 moonTransmittance,
 	in float sunBrightness,
 
 	in sampler2D skyLutDay,
@@ -320,7 +320,7 @@ vec3 getSkyColor(
 }
 
 vec3 getSkyColor(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 	in float sunBrightness,
 
 	in sampler2D transmittanceLut,
@@ -376,9 +376,9 @@ vec3 getClouds(
 	vec3 scatteringColor = (sunColor + moonColor) * 2.0;
 
 	vec3 ambientColor = getSkyColor(
-		vec3(0.0, 1.0, 0.0), 
-		sunTransmittance, 
-		moonTransmittance, 
+		vec3(0.0, 1.0, 0.0),
+		sunTransmittance,
+		moonTransmittance,
 		0.0,
 		skyLutDay,
 		skyLutNight,
@@ -392,7 +392,7 @@ vec3 getClouds(
 	#endif
 
 	vec3 scattering = cloudsTransmittanceAndScattering.y * scatteringColor * (
-		4.0 + mieMultiplier * (getMiePhase(dot(viewDir, sunVector), 0.8) + 
+		4.0 + mieMultiplier * (getMiePhase(dot(viewDir, sunVector), 0.8) +
 		0.5 * getMiePhase(dot(viewDir, moonVector), 0.7))
 	) + ambientColor * 1.5;
 
@@ -505,7 +505,7 @@ vec3 getSkyAndClouds(
 }
 
 vec3 getSkyAndClouds(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 
 	in sampler2D transmittanceLut,
 	in sampler2D skyLutDay,
@@ -518,7 +518,7 @@ vec3 getSkyAndClouds(
 }
 
 vec3 getSkyAndClouds(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 
 	in sampler2D transmittanceLut,
 	in sampler2D skyLutDay,
@@ -531,7 +531,7 @@ vec3 getSkyAndClouds(
 }
 
 vec3 getSkyAndClouds(
-	in vec3 viewDir, 
+	in vec3 viewDir,
 
 	in sampler2D transmittanceLut,
 	in sampler2D skyLutDay,

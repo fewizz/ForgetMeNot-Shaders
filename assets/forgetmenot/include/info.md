@@ -1,4 +1,4 @@
-Hi! If you're reading this, you might be confused about the structure of my includes. Or you could be future me irritated that my pipeline  structure is so seemingly random. Either one of the two. 
+Hi! If you're reading this, you might be confused about the structure of my includes. Or you could be future me irritated that my pipeline  structure is so seemingly random. Either one of the two.
 
 Here's an explanation:
 - "material_program" refers to the Canvas material program that is  responsible for rendering the world.

@@ -55,7 +55,7 @@ ParallaxResult waterParallax(in mat3 tbn, in vec3 sceneSpacePos, in vec2 uv) {
 	float layerDepth = 1.0 / numLayers;
 
 	float currentLayerDepth = 0.0;
-	
+
 	vec2 shift = viewDir.xy / viewDir.z * 0.2;
 	vec2 deltaUv = shift / numLayers;
 
@@ -78,7 +78,7 @@ ParallaxResult waterParallax(in mat3 tbn, in vec3 sceneSpacePos, in vec2 uv) {
 	float before = getWaterHeight(previousUv, 3) - currentLayerDepth + layerDepth;
 
 	float weight = after / (after - before);
-	
+
 	vec2 finalUv = mix(currentUv, previousUv, weight);
 
 	return ParallaxResult(finalUv, currentLayerDepth);

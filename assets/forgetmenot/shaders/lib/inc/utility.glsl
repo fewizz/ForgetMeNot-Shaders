@@ -231,10 +231,10 @@ float getDistanceToBox(in vec3 viewDir, in vec3 pos, in vec3 normal, out vec2 uv
 	float t = -dist / dot(viewDir, normal);
 	vec3 hitPoint = viewDir * t;
 	vec3 diff = hitPoint - pos;
-	
+
 	uv = vec2(dot(diff, right), dot(diff, up));
 	float distToCenter = max(abs(uv.x), abs(uv.y));
-	
+
 	return distToCenter;
 
 	// float sun = step(distToCenter, 1.5) * step(t, 0.0);

@@ -42,7 +42,7 @@ vec3 clipToScreenSpacePos(vec4 clipSpacePos) {
 vec3 fromScreenSpace(in vec3 screenSpacePos, in mat4 matrix) {
 	vec3 clipSpacePos = screenToClipSpacePos(screenSpacePos);
 	vec4 temp = matrix * vec4(clipSpacePos, 1.0);
-	return temp.xyz / temp.w; 
+	return temp.xyz / temp.w;
 }
 // General function to convert any other space back to screen space
 vec3 toScreenSpace(in vec3 pos, in mat4 matrix) {

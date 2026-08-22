@@ -1,5 +1,5 @@
 #include forgetmenot:shaders/lib/api/fmn_pbr.glsl
-#include forgetmenot:shaders/lib/inc/header.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
 #include forgetmenot:shaders/lib/inc/noise.glsl
 #include forgetmenot:shaders/lib/inc/seasons.glsl
 

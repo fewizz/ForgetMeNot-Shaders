@@ -1,6 +1,6 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/exposure.glsl 
-#include forgetmenot:shaders/lib/inc/noise.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/exposure.glsl
+#include forgetmenot:shaders/lib/inc/noise.glsl
 
 uniform sampler2D u_color;
 uniform sampler2D u_exposure;
@@ -42,9 +42,9 @@ float liftGammaGain(float color, float lift, float gamma, float gain) {
 vec3 lottes(vec3 x, float whitePoint) {
 	const vec3 a = vec3(1.6);
 	const vec3 d = vec3(0.977);
-	 
+
 	vec3 hdrMax = vec3(whitePoint);
-	
+
 	const vec3 midIn = vec3(0.18);
 	const vec3 midOut = vec3(0.267);
 
@@ -110,7 +110,7 @@ void main() {
 		vec3 lift = vec3(0.0, 0.0, 0.0);
 		vec3 gamma = vec3(1.0, 1.0, 1.0);
 		vec3 gain = vec3(1.0, 1.0, 1.0);
-	
+
 		#define LIFT_R lift.r
 		#define LIFT_G lift.g
 		#define LIFT_B lift.b
@@ -146,7 +146,7 @@ void main() {
 		color.r = clamp01(liftGammaGain(color.r, LIFT_R, GAMMA_R, GAIN_R));
 		color.b = clamp01(liftGammaGain(color.b, LIFT_G, GAMMA_G, GAIN_G));
 		color.g = clamp01(liftGammaGain(color.g, LIFT_B, GAMMA_B, GAIN_B));
-	#endif 
+	#endif
 
 	color = clamp01(pow(color, vec3(1.0 / 2.2)));
 	fragColor = vec4(color, 1.0);

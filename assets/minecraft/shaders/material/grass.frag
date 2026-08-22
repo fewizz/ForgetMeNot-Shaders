@@ -2,7 +2,7 @@
 
 // Checks for axis-aligned normals to differentiate from grass cross model and grass block
 bool isGrassBlock() {
-	return 
+	return
 		abs(dot(frx_vertexNormal.xyz, vec3(1.0, 0.0, 0.0))) > 0.99 ||
 		abs(dot(frx_vertexNormal.xyz, vec3(0.0, 1.0, 0.0))) > 0.99 ||
 		abs(dot(frx_vertexNormal.xyz, vec3(0.0, 0.0, 1.0))) > 0.99;

@@ -89,12 +89,12 @@ void main() {
 
 	// ----------------------------------------------------------------------------------------------------
 	// Refractions
-	vec4 solidColor; 
+	vec4 solidColor;
 	float solidDepth = texture(u_solid_depth, texcoord).r;
 
 	float refractedDepthBack = depthFar;
 	float refractedDepthFront = depthFar;
-	
+
 	if((depthIsReversed ? solidDepth > depthFar : solidDepth < depthFar) && material.fragNormal != material.vertexNormal) {
 		const float angleMultiplier[3] = float[3](
 			1.1, 1.3, 1.5
@@ -192,10 +192,10 @@ void main() {
 
 		// Water absorption
 		composite *= mix(normalize(waterFogColor), vec3(1.0), exp(-waterFogDistance * 0.5));
-		
+
 		// Water scattering
 		float waterFogTransmittance = exp(-waterFogDistance * (WATER_DIRT_AMOUNT));
-		
+
 		composite = mix(waterFogColor, composite, waterFogTransmittance * 0.99 + 0.01);
 	}
 

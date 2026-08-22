@@ -1,12 +1,12 @@
 // --------------------------------------------------------------------------------------------------------
-// All code from this file is taken or referenced from "Production Sky Rendering" at https://www.shadertoy.com/view/slSXRW, 
+// All code from this file is taken or referenced from "Production Sky Rendering" at https://www.shadertoy.com/view/slSXRW,
 // which references "A Scalable and Production Ready Sky and Atmosphere Rendering Technique", Hillaire (2020).
 //
 // Minimal code changes. Original Shadertoy code released under the MIT License.
 // --------------------------------------------------------------------------------------------------------
 
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/sky.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/sky.glsl
 
 uniform sampler2D u_transmittance;
 
@@ -31,7 +31,7 @@ vec3 getSphericalDir(float theta, float phi) {
 void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 	lumTotal = vec3(0.0);
 	fms = vec3(0.0);
-	
+
 	float invSamples = 1.0/float(sqrtSamples*sqrtSamples);
 	for (int i = 0; i < sqrtSamples; i++) {
 		for (int j = 0; j < sqrtSamples; j++) {
@@ -40,19 +40,19 @@ void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 			float theta = PI * (float(i) + 0.5) / float(sqrtSamples);
 			float phi = safeacos(1.0 - 2.0*(float(j) + 0.5) / float(sqrtSamples));
 			vec3 rayDir = getSphericalDir(theta, phi);
-			
+
 			float atmoDist = rayIntersectSphere(pos, rayDir, atmosphereRadiusMM);
 			float groundDist = rayIntersectSphere(pos, rayDir, groundRadiusMM);
 			float tMax = atmoDist;
 			if (groundDist > 0.0) {
 				tMax = groundDist;
 			}
-			
+
 			float cosTheta = dot(rayDir, sunDir);
-	
+
 			float miePhaseValue = getMiePhase(cosTheta);
 			float rayleighPhaseValue = getRayleighPhase(-cosTheta);
-			
+
 			vec3 lum = vec3(0.0), lumFactor = vec3(0.0), transmittance = vec3(1.0);
 			float t = 0.0;
 			for (float stepI = 0.0; stepI < mulScattSteps; stepI += 1.0) {
@@ -67,12 +67,12 @@ void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 				getScatteringValues(newPos, rayleighScattering, mieScattering, extinction);
 
 				vec3 sampleTransmittance = exp(-dt*extinction);
-				
+
 				// Integrate within each segment.
 				vec3 scatteringNoPhase = rayleighScattering + mieScattering;
 				vec3 scatteringF = (scatteringNoPhase - scatteringNoPhase * sampleTransmittance) / extinction;
 				lumFactor += transmittance*scatteringF;
-				
+
 				// This is slightly different from the paper, but I think the paper has a mistake?
 				// In equation (6), I think S(x,w_s) should be S(x-tv,w_s).
 				vec3 sunTransmittance = getValFromTLUT(u_transmittance, newPos, sunDir);
@@ -87,7 +87,7 @@ void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 				lum += scatteringIntegral*transmittance;
 				transmittance *= sampleTransmittance;
 			}
-			
+
 			if (groundDist > 0.0) {
 				vec3 hitPos = pos + groundDist*rayDir;
 				if (dot(pos, sunDir) > 0.0) {
@@ -95,7 +95,7 @@ void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 					lum += transmittance*groundAlbedo*getValFromTLUT(u_transmittance, hitPos, sunDir);
 				}
 			}
-			
+
 			fms += lumFactor*invSamples;
 			lumTotal += lum*invSamples;
 		}
@@ -105,18 +105,18 @@ void getMulScattValues(vec3 pos, vec3 sunDir, out vec3 lumTotal, out vec3 fms) {
 void main() {
 	float u = texcoord.x;
 	float v = texcoord.y;
-	
+
 	float sunCosTheta = 2.0*u - 1.0;
 	float sunTheta = safeacos(sunCosTheta);
 	float height = mix(groundRadiusMM, atmosphereRadiusMM, v);
-	
-	vec3 pos = vec3(0.0, height, 0.0); 
+
+	vec3 pos = vec3(0.0, height, 0.0);
 	vec3 sunDir = normalize(vec3(0.0, sunCosTheta, -sin(sunTheta)));
-	
+
 	vec3 lum, f_ms;
 	getMulScattValues(pos, sunDir, lum, f_ms);
-	
+
 	// Equation 10 from the paper.
-	vec3 psi = lum  / (1.0 - f_ms); 
+	vec3 psi = lum  / (1.0 - f_ms);
 	fragColor = vec4(psi, 1.0);
 }

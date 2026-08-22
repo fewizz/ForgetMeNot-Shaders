@@ -15,8 +15,8 @@ vec3 getMoonVector() {
 vec3 getTimeOfDayFactors() {
 	// vec3(dayFactor, nightFactor, sunsetFactor)
 	return vec3(
-		frx_worldIsMoonlit == 0 ? frx_skyLightTransitionFactor : 0.0, 
-		frx_worldIsMoonlit == 1 ? frx_skyLightTransitionFactor : 0.0, 
+		frx_worldIsMoonlit == 0 ? frx_skyLightTransitionFactor : 0.0,
+		frx_worldIsMoonlit == 1 ? frx_skyLightTransitionFactor : 0.0,
 		1.0 - frx_skyLightTransitionFactor
 	);
 }

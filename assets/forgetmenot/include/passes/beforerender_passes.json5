@@ -117,7 +117,7 @@
 				framebuffer: "skybox_d6",
 				width: 128,
 				height: 128,
-				lod: 6, 
+				lod: 6,
 				samplerImages: [
 					"skybox"
 				]
@@ -128,7 +128,7 @@
 				framebuffer: "skybox_d7",
 				width: 128,
 				height: 128,
-				lod: 7, 
+				lod: 7,
 				samplerImages: [
 					"skybox"
 				]

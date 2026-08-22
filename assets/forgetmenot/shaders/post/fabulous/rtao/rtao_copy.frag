@@ -1,4 +1,4 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
 #include forgetmenot:shaders/lib/inc/packing.glsl
 #include forgetmenot:shaders/lib/inc/material.glsl
 
@@ -14,7 +14,7 @@ layout(location = 2) out vec4 normalTarget;
 
 void main() {
 	initGlobals();
-	
+
 	Material material = unpackMaterial(texture(u_data, texcoord).xyz);
 
 	rtaoTarget = texture(u_rtao, texcoord);

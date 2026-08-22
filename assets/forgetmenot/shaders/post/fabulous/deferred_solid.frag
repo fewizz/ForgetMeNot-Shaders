@@ -66,7 +66,7 @@ const Hit NO_HIT = Hit(vec3(0.0), vec3(0.0), false);
 			float closestDist = min(nextDist.x, min(nextDist.y, nextDist.z));
 
 			currentPos += rayDir * closestDist;
-			
+
 			vec3 stepAxis = vec3(lessThanEqual(nextDist, vec3(closestDist)));
 
 			voxelPos += ivec3(stepAxis * stepDir);
@@ -139,7 +139,7 @@ void main() {
 
 				material.fragNormal = hit.normal;
 				material.vertexNormal = hit.normal;
-				
+
 				sceneSpacePos = mix(sceneSpacePos, hit.pos / voxelScale, 1.0 - step(length(hit.pos), length(sceneSpacePos)));
 
 				vec3 worldSpaceHitPos = hit.pos + frx_cameraPos * voxelScale;
@@ -178,11 +178,11 @@ void main() {
 			rtaoSample.g
 		);
 
-		#ifdef REALISTIC_METALS 
+		#ifdef REALISTIC_METALS
 		if(material.f0 > 0.999) {
 			color *= 0.5;
 		}
-		#endif		
+		#endif
 	} else {
 		color = texture(u_sky_display, texcoord).rgb;
 	}

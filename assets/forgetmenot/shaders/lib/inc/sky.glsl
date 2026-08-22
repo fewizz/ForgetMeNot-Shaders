@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------
-// Most code from this file is taken or referenced from "Production Sky Rendering" at https://www.shadertoy.com/view/slSXRW, 
+// Most code from this file is taken or referenced from "Production Sky Rendering" at https://www.shadertoy.com/view/slSXRW,
 // which references "A Scalable and Production Ready Sky and Atmosphere Rendering Technique", Hillaire (2020).
 //
 // Minimal code changes; modified for my use case. Original Shadertoy code released under the MIT License.
@@ -73,7 +73,7 @@ float kleinNishinaPhase(float cosTheta, float g) {
 float getMiePhase(float cosTheta) {
 	return kleinNishinaPhase(cosTheta, 0.76385);
 }
-float getMiePhase(float cosTheta, float g) {	
+float getMiePhase(float cosTheta, float g)
 	return kleinNishinaPhase(cosTheta, g);
 }
 
@@ -82,8 +82,8 @@ float getRayleighPhase(float cosTheta) {
 }
 
 void getScatteringValues(
-	vec3 pos, 
-	out vec3 rayleighScattering, 
+	vec3 pos,
+	out vec3 rayleighScattering,
 	out float mieScattering,
 	out vec3 extinction
 ) {
@@ -91,15 +91,15 @@ void getScatteringValues(
 	// Note: Paper gets these switched up.
 	float rayleighDensity = exp(-altitudeKM / 8.0);
 	float mieDensity = exp(-altitudeKM / 1.2);
-	
+
 	rayleighScattering = rayleighScatteringBase * rayleighDensity;
 	float rayleighAbsorption = rayleighAbsorptionBase * rayleighDensity;
-	
+
 	mieScattering = mieScatteringBase * mieDensity;
 	float mieAbsorption = mieAbsorptionBase * mieDensity;
-	
+
 	vec3 ozoneAbsorption = ozoneAbsorptionBase * max(0.0, 1.0 - abs(altitudeKM - 25.0) / 15.0);
-	
+
 	extinction = rayleighScattering + rayleighAbsorption + mieScattering + mieAbsorption + ozoneAbsorption;
 }
 
@@ -128,7 +128,7 @@ vec3 getValFromTLUT(sampler2D tex, vec3 pos, vec3 sunDir) {
 	float sunCosZenithAngle = dot(sunDir, up);
 	vec2 uv = vec2(clamp(0.5 + 0.5 * sunCosZenithAngle, 0.0, 1.0),
 				max(0.0, min(1.0, (height - groundRadiusMM) / (atmosphereRadiusMM - groundRadiusMM))));
-				
+
 	return texture(tex, uv).rgb;
 }
 vec3 getValFromMultiScattLUT(sampler2D tex, vec3 pos, vec3 sunDir) {
@@ -137,7 +137,7 @@ vec3 getValFromMultiScattLUT(sampler2D tex, vec3 pos, vec3 sunDir) {
 	float sunCosZenithAngle = dot(sunDir, up);
 	vec2 uv = vec2(clamp(0.5 + 0.5 * sunCosZenithAngle, 0.0, 1.0),
 				max(0.0, min(1.0, (height - groundRadiusMM) / (atmosphereRadiusMM - groundRadiusMM))));
-	
+
 	return texture(tex, uv).rgb;
 }
 
@@ -145,8 +145,8 @@ vec3 getValFromMultiScattLUT(sampler2D tex, vec3 pos, vec3 sunDir) {
 // but the latitude/altitude is non-linear to get more resolution near the horizon.
 const int numScatteringSteps = 32;
 vec3 raymarchScattering(
-	vec3 pos, 
-	vec3 rayDir, 
+	vec3 pos,
+	vec3 rayDir,
 	vec3 sunDir,
 	float tMax,
 	float numSteps,
@@ -155,10 +155,10 @@ vec3 raymarchScattering(
 	sampler2D multiscatteringLut
 ) {
 	float cosTheta = dot(rayDir, sunDir);
-	
+
 	float miePhaseValue = getMiePhase(cosTheta);
 	float rayleighPhaseValue = getRayleighPhase(-cosTheta);
-	
+
 	vec3 lum = vec3(0.0);
 	vec3 transmittance = vec3(1.0);
 	float t = 0.0;
@@ -166,18 +166,18 @@ vec3 raymarchScattering(
 		float newT = ((i + 0.3)/numSteps)*tMax;
 		float dt = newT - t;
 		t = newT;
-		
+
 		vec3 newPos = pos + t * rayDir;
-		
+
 		vec3 rayleighScattering, extinction;
 		float mieScattering;
 		getScatteringValues(newPos, rayleighScattering, mieScattering, extinction);
-		
+
 		vec3 sampleTransmittance = exp(-dt*extinction);
 
 		vec3 sunTransmittance = getValFromTLUT(transmittanceLut, newPos, sunDir);
 		vec3 psiMS = getValFromMultiScattLUT(multiscatteringLut, newPos, sunDir);
-		
+
 		vec3 rayleighInScattering = rayleighScattering*(rayleighPhaseValue*sunTransmittance + psiMS);
 		vec3 mieInScattering = mieScattering*(miePhaseValue*sunTransmittance + psiMS);
 		vec3 inScattering = (rayleighInScattering + mieInScattering * mieScatteringAmount);
@@ -186,15 +186,15 @@ vec3 raymarchScattering(
 		vec3 scatteringIntegral = (inScattering - inScattering * sampleTransmittance) / extinction;
 
 		lum += scatteringIntegral*transmittance;
-		
+
 		transmittance *= sampleTransmittance;
 	}
 	return lum;
 }
 
 vec3 raymarchScattering(
-	vec3 pos, 
-	vec3 rayDir, 
+	vec3 pos,
+	vec3 rayDir,
 	vec3 sunDir,
 	float tMax,
 	float numSteps,
@@ -202,8 +202,8 @@ vec3 raymarchScattering(
 	sampler2D multiscatteringLut
 ) {
 	return raymarchScattering(
-		pos, 
-		rayDir, 
+		pos,
+		rayDir,
 		sunDir,
 		tMax,
 		numSteps,
@@ -216,7 +216,7 @@ vec3 raymarchScattering(
 vec3 getValFromSkyLUT(vec3 rayDir, vec3 sunDir, sampler2D skyLut) {
 	float height = length(skyViewPos);
 	vec3 up = skyViewPos * rcp(height);
-	
+
 	float horizonAngle = safeacos(sqrt(height * height - groundRadiusMM * groundRadiusMM) / height);
 	float altitudeAngle = horizonAngle - acos(dot(rayDir, up)); // Between -PI/2 and PI/2
 	float azimuthAngle; // Between 0 and 2*PI
@@ -226,16 +226,16 @@ vec3 getValFromSkyLUT(vec3 rayDir, vec3 sunDir, sampler2D skyLut) {
 	} else {
 		vec3 right = cross(sunDir, up);
 		vec3 forward = cross(up, right);
-		
+
 		vec3 projectedDir = normalize(rayDir - up*(dot(rayDir, up)));
 		float sinTheta = dot(projectedDir, right);
 		float cosTheta = dot(projectedDir, forward);
 		azimuthAngle = atan(sinTheta, cosTheta) + PI;
 	}
-	
+
 	// Non-linear mapping of altitude angle. See Section 5.3 of the paper.
 	float v = 0.5 + 0.5*sign(altitudeAngle)*sqrt(abs(altitudeAngle)*2.0/PI);
 	vec2 uv = vec2(azimuthAngle / (TAU), v);
-	
+
 	return texture(skyLut, uv).rgb;
 }

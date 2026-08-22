@@ -2,10 +2,10 @@
 // Atmosphere taken from https://www.shadertoy.com/view/slSXRW, MIT license. Minimal code changes.
 // --------------------------------------------------------------------------------------------------------
 
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/sky.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/sky.glsl
 #include forgetmenot:shaders/lib/inc/cubemap.glsl
-#include forgetmenot:shaders/lib/inc/noise.glsl 
+#include forgetmenot:shaders/lib/inc/noise.glsl
 
 #define IGNORE_MIE_SCATTERING_ON_CLOUDS
 #include forgetmenot:shaders/lib/inc/sky_display.glsl

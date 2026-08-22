@@ -31,7 +31,7 @@ vec3 getClippedWorldSpacePos() {
 
 void autoGenNormal() {
 	if(
-		fmn_autoGenNormalStrength < 0.001 || 
+		fmn_autoGenNormalStrength < 0.001 ||
 		frx_fragNormal != vec3(0.0, 0.0, 1.0) || // Don't overwrite existing custom normals
 		#ifdef REALISTIC_WATER
 			fmn_isWater == 1 ||
@@ -176,8 +176,8 @@ void resolveMaterials() {
 	isInventory = frx_isGui && !frx_isHand;
 	gamma = vec3(isInventory ? 1.0 : 2.2);
 	tbn = mat3(
-		frx_vertexTangent.xyz, 
-		cross(frx_vertexTangent.xyz, frx_vertexNormal.xyz), 
+		frx_vertexTangent.xyz,
+		cross(frx_vertexTangent.xyz, frx_vertexNormal.xyz),
 		frx_vertexNormal.xyz
 	);
 	lightmap = vec3(1.0);
@@ -206,8 +206,8 @@ void resolveMaterials() {
 		// Implement some canvas material conditions
 		// frx_matHurt - red flash on hurt entities
 		// frx_matFlash - white flash on things like tnt
-		frx_fragColor.rgb = mix(frx_fragColor.rgb, vec3(1.0, 0.0, 0.0), 0.5 * frx_matHurt); 
-		frx_fragColor.rgb = mix(frx_fragColor.rgb, vec3(2.0), 0.5 * frx_matFlash); 
+		frx_fragColor.rgb = mix(frx_fragColor.rgb, vec3(1.0, 0.0, 0.0), 0.5 * frx_matHurt);
+		frx_fragColor.rgb = mix(frx_fragColor.rgb, vec3(2.0), 0.5 * frx_matFlash);
 	} else {
 		frx_fragColor.rgb *= dot(frx_vertexNormal.xyz, normalize(vec3(0.2, 0.8, 0.6))) * 0.4 + 0.6;
 	}

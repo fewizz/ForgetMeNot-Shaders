@@ -1,6 +1,6 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/space.glsl 
-#include forgetmenot:shaders/lib/inc/noise.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/space.glsl
+#include forgetmenot:shaders/lib/inc/noise.glsl
 
 uniform sampler2D u_rtao;
 uniform sampler2D u_depth;
@@ -33,7 +33,7 @@ vec4 blur(in int samples, in float radius, in vec4 centerColor, in float centerD
 
 void main() {
 	initGlobals();
-	
+
 	float centerDepth = linearizeDepth(texture(u_depth, texcoord).r);
 	vec3 centerNormal = texture(u_normal, texcoord).rgb;
 	vec4 centerColor = texture(u_rtao, texcoord);
@@ -42,5 +42,5 @@ void main() {
 	const float radius = 12.0;
 
 	fragColor = blur(samples, radius, centerColor, centerDepth, centerNormal);
-	
+
 }

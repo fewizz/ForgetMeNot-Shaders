@@ -187,7 +187,7 @@ vec3 getAerialPerspective(in vec3 viewDir, in float blockDistance) {
 	vec3 tdata = getTimeOfDayFactors();
 
 	float tMax = 64.0 * blockDistance / 1e6;
-	
+
 	float raymarchSteps = mix(32.0, 16.0, tdata.z);
 
 	float mieAmount = 0.0;
@@ -200,7 +200,7 @@ vec3 getAerialPerspective(in vec3 viewDir, in float blockDistance) {
 	if(tdata.x + tdata.z > 0.0) {
 		color += raymarchScattering(skyViewPos, viewDir, getSunVector(), tMax, raymarchSteps, mieAmount, u_transmittance, u_multiscattering);
 	}
-	
+
 	if(tdata.y + tdata.z > 0.0) {
 		color += nightAdjust(raymarchScattering(skyViewPos, viewDir, getMoonVector(), tMax, raymarchSteps, mieAmount, u_transmittance, u_multiscattering));
 	}
@@ -231,9 +231,9 @@ vec3 getVolumetricLight(in vec3 sceneSpacePos, in vec3 viewDir, in float depth) 
 
 void main() {
 	initGlobals();
-	
+
 	uvec3 samplePacked = texture(u_data, texcoord).xyz;
-	
+
 	vec3 color = texture(u_color, texcoord).rgb;
 	float depth = texture(u_depth, texcoord).r;
 
@@ -267,7 +267,7 @@ void main() {
 			if(frx_worldIsOverworld == 1) {
 				float undergroundFactor = linearstep(0.0, 0.5, frx_smoothedEyeBrightness.y);
 				undergroundFactor = mix(1.0, undergroundFactor, float(frx_worldHasSkylight));
-				
+
 				if(undergroundFactor > 0.01) {
 					scattering = getAerialPerspective(viewDir, blockDistance);
 				}

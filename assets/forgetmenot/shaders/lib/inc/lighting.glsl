@@ -99,8 +99,8 @@ float getShadowFactor(
 	in vec3 vertexNormal,
 	in float sssAmount,
 	in bool doPcss,
-	in int shadowMapSamples, 
-	in sampler2DArray shadowMapTexture, 
+	in int shadowMapSamples,
+	in sampler2DArray shadowMapTexture,
 	in sampler2DArrayShadow shadowMap
 ) {
 	const float shadowSampleOffsetFactor = 2048.0;
@@ -116,8 +116,8 @@ float getShadowFactor(
 
 		for(int i = 0; i < pcssSamples; i++) {
 			vec2 sampleOffset = diskSampling(i, pcssSamples, sqrt(interleavedGradient(i + pcssSamples)) * TAU) * (250.0 / cascadeDistance(cascade));
-			
-			// Double the sample offset for penumbra search 
+
+			// Double the sample offset for penumbra search
 			vec2 sampleCoord = shadowScreenPos.xy + 2.0 * sampleOffset / shadowSampleOffsetFactor;
 
 			float depthQuery = texture(shadowMapTexture, vec3(sampleCoord, cascade)).r;
@@ -151,7 +151,7 @@ vec3 getSunLightColor(
 	#else
 		// Samples sun transmittance directly rather than using the skybox
 		vec3 directLightColor = 8.0 * getValFromTLUT(transmittanceLut, skyViewPos + vec3(0.0, 0.00002, 0.0) * max(0.0, (sceneSpacePos + frx_cameraPos).y - 60.0), frx_skyLightVector);
-	
+
 		if(frx_worldIsMoonlit == 1) {
 			directLightColor = nightAdjust(directLightColor);
 		}
@@ -167,7 +167,7 @@ vec3 getSkyLightColor(
 ) {
 	vec3 ambientLighting = vec3(0.0);
 
-	// #ifndef CLOUD_SHADOWS 
+	// #ifndef CLOUD_SHADOWS
 	// 	#define DIRECTIONAL_SKYLIGHT
 	// #endif
 
@@ -177,12 +177,12 @@ vec3 getSkyLightColor(
 		ambientLighting = textureLod(skybox, fragNormal, 7).rgb * 2.0;
 	#else
 		// Averages the color of all faces
-		ambientLighting = 
-			textureLod(skybox, vec3( 1.0,  0.0,  0.0), 7).rgb + 
-			textureLod(skybox, vec3( 0.0,  1.0,  0.0), 7).rgb + 
-			textureLod(skybox, vec3( 0.0,  0.0,  1.0), 7).rgb + 
-			textureLod(skybox, vec3(-1.0,  0.0,  0.0), 7).rgb + 
-			textureLod(skybox, vec3( 0.0, -1.0,  0.0), 7).rgb + 
+		ambientLighting =
+			textureLod(skybox, vec3( 1.0,  0.0,  0.0), 7).rgb +
+			textureLod(skybox, vec3( 0.0,  1.0,  0.0), 7).rgb +
+			textureLod(skybox, vec3( 0.0,  0.0,  1.0), 7).rgb +
+			textureLod(skybox, vec3(-1.0,  0.0,  0.0), 7).rgb +
+			textureLod(skybox, vec3( 0.0, -1.0,  0.0), 7).rgb +
 			textureLod(skybox, vec3( 0.0,  0.0, -1.0), 7).rgb;
 
 		ambientLighting /= 3.0;
@@ -237,7 +237,7 @@ vec3 getHandheldLightColor(
 			// Flashlight shape
 			spotlightFactor -= 0.5 * (
 				smoothstep(outerLimit * 0.5, mix(outerLimit, innerLimit, 0.4) * 0.5, distSq) -
-				smoothstep(mix(outerLimit, innerLimit, 0.6) * 0.5, innerLimit * 0.5, distSq) + 
+				smoothstep(mix(outerLimit, innerLimit, 0.6) * 0.5, innerLimit * 0.5, distSq) +
 				smoothstep(outerLimit * 0.05, innerLimit * 0.05, distSq)
 			);
 
@@ -287,7 +287,7 @@ vec3 basicLighting(
 	if(frx_worldHasSkylight == 0) skyLight = 1.0;
 
 	float emission = clamp01(frx_luminance(albedo) - 1.0);
-	
+
 	float NdotL = clamp01(dot(fragNormal, frx_skyLightVector));
 	NdotL = mix(NdotL, 1.0, step(0.001, sssAmount));
 	//NdotL = mix(NdotL, 1.0, step(NdotL, 0.001) * step(0.001, sssAmount));
@@ -306,7 +306,7 @@ vec3 basicLighting(
 	if(frx_worldHasSkylight == 1) {
 		directLighting = directLightColor;
 		directLighting *= (1.0 - 0.9 * fmn_rainFactor);
-		
+
 		shadowFactor = getShadowFactor(
 			sceneSpacePos,
 			vertexNormal,
@@ -317,7 +317,7 @@ vec3 basicLighting(
 			shadowMap
 		);
 		shadowFactor *= skyLight * step(0.01, NdotL);
-		
+
 		directLighting *= (NdotL * shadowFactor + sunBounceAmount) * frx_skyLightTransitionFactor;
 	}
 

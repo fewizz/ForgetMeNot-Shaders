@@ -3,7 +3,7 @@
 	"pipeline.forgetmenot.desc": "Immersive shaders for Canvas",
 
 	"config.forgetmenot.category.atmosphere": "Atmosphere",
-	
+
 	"config.forgetmenot.name.sun_brightness": "Sun Brightness",
 	"config.forgetmenot.desc.sun_brightness": "Brightness of the sun. Affects the appearance of the sky as well as brightness of direct sunlight on the ground.",
 
@@ -76,7 +76,7 @@
 
 	"config.forgetmenot.name.rtao_ray_steps": "RTAO Ray Step Count",
 	"config.forgetmenot.desc.rtao_ray_steps": "The number of steps to use for each RTAO ray. Big impact on performance.",
-	
+
 	"config.forgetmenot.category.water": "Water",
 
 	"config.forgetmenot.name.realistic_water": "Realistic Water Waves",
@@ -232,7 +232,7 @@
 
 	"config.forgetmenot.name.internal_materials": "Internal Materials",
 	"config.forgetmenot.desc.internal_materials": "Internal option used by material shaders to detect if Forget-me-not is active. Do not disable.",
-	
+
 	"config.forgetmenot.name.fancy_powder_snow": "Fancy Powder Snow",
 	"config.forgetmenot.desc.fancy_powder_snow": "Uses voxel ray tracing to render a fancy effect for powder snow instead of the traditional fog."
 }

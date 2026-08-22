@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------------------------------------
-// #include forgetmenot:shaders/lib/api_includes.glsl 
+// #include forgetmenot:shaders/lib/api_includes.glsl
 // --------------------------------------------------------------------------------------------------------
 
 #include frex:shaders/api/header.glsl

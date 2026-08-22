@@ -1,5 +1,5 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/space.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/space.glsl
 
 uniform sampler2D u_current;
 uniform sampler2D u_previous;

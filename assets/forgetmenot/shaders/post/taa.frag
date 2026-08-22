@@ -1,5 +1,5 @@
-#include forgetmenot:shaders/lib/inc/header.glsl 
-#include forgetmenot:shaders/lib/inc/space.glsl 
+#include forgetmenot:shaders/lib/inc/header.glsl
+#include forgetmenot:shaders/lib/inc/space.glsl
 
 uniform sampler2D u_color;
 uniform sampler2D u_previous_frame;
@@ -10,7 +10,7 @@ in vec2 texcoord;
 
 layout(location = 0) out vec4 fragColor;
 
-// tone map and inverse tone map your color texture reads 
+// tone map and inverse tone map your color texture reads
 // to prevent bright regions from being fuzzy due to TAA
 vec3 toneMap(in vec3 color) {
 	return color;//color / (color + 1.0);
@@ -41,7 +41,7 @@ vec3 neighbourhoodClipping(sampler2D currTex, vec3 prevColor) {
 		for(int y = -NEIGHBORHOOD_SIZE; y <= NEIGHBORHOOD_SIZE; y++) {
 			vec3 color = texelFetch(currTex, ivec2(gl_FragCoord.xy) + ivec2(x, y), 0).rgb;
 			color = toneMap(color);
-			minColor = min(minColor, color); maxColor = max(maxColor, color); 
+			minColor = min(minColor, color); maxColor = max(maxColor, color);
 		}
 	}
 	return clipAABB(prevColor, minColor, maxColor);
@@ -83,9 +83,9 @@ void main() {
 
 			return;
 		#endif
-				
+
 		vec3 screenPos = vec3(texcoord, depth);
-		
+
 		vec3 viewPos = setupSceneSpacePos(screenPos);
 		vec3 positionDifference = frx_cameraPos - frx_lastCameraPos;
 		vec3 lastScreenPos = lastFrameSceneSpaceToScreenSpace(viewPos + positionDifference);
