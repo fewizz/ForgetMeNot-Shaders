@@ -95,13 +95,22 @@ void reflections(
 		);
 		vec3 windowSpacePos = screenSpacePos * vec3(frxu_size, 1.0);
 
-		float flDnl = 0.5 / max(max(abs(windowSpaceDir.x), abs(windowSpaceDir.y)), 0.000001);
+		vec3 viewSpacePos = setupViewSpacePos(screenSpacePos);
+		vec3 viewSpaceNormal = mat3(frx_lastViewMatrix) * material.fragNormal;
 
-		windowSpacePos.z += abs(windowSpaceDir.z) * flDnl * 1.1 * (depthIsReversed ? 1.0 : -1.0);
-		windowSpacePos.z += 0.000001 * (depthIsReversed ? 1.0 : -1.0);
+		 // Calculating normal in window space, needed for initial position xy shift
+		vec3 shiftedByX = viewSpacePos + vec3(1.0, 0.0, -viewSpaceNormal.x / viewSpaceNormal.z) * 0.001;
+		vec3 shiftedByY = viewSpacePos + vec3(0.0, 1.0, -viewSpaceNormal.y / viewSpaceNormal.z) * 0.001;
+		shiftedByX = (viewSpaceToScreenSpace(shiftedByX) - screenSpacePos) * vec3(frxu_size, 1.0);
+		shiftedByY = (viewSpaceToScreenSpace(shiftedByY) - screenSpacePos) * vec3(frxu_size, 1.0);
+		vec3 windowSpaceNorm = cross(shiftedByY, shiftedByX) * sign(viewSpaceNormal.z) * (depthIsReversed ? -1.0 : 1.0);
+
+		windowSpacePos.z -= (abs(windowSpaceDir.z) + 0.000001) * (depthIsReversed ? -1.0 : 1.0);
 		windowSpacePos.xy =
-			floor(windowSpacePos.xy) + vec2(0.5)
-			+ (sign(windowSpaceDir.xy) * 0.5 - (windowSpaceDir.xy * flDnl)) * float(depthIsReversed ? windowSpaceDir.z < 0.0 : windowSpaceDir.z > 0.0);
+			// center
+			floor(windowSpacePos.xy) + vec2(0.5) +
+				// closer to the pixel border, in direction of window space normal
+				(abs(windowSpaceNorm.x) > abs(windowSpaceNorm.y) ? vec2(sign(windowSpaceNorm.x), 0.0) : vec2(0.0, sign(windowSpaceNorm.y))) * 0.35;
 
 		float hitDepth;
 

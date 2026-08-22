@@ -24,24 +24,21 @@ bool raytrace(inout vec3 pos, vec3 dir, int steps, sampler2D depths, out float d
 			vec2 dists_to_axis = cell_size - position_in_cell;
 			vec2 diagonal_dists = dists_to_axis / abs(dir.xy);
 			float dist = min(diagonal_dists.x, diagonal_dists.y);
-			advance = max(dist, 0.01) * 1.01 * dir;
+			advance = max(dist, 0.001) * 1.001 * dir;
 		}
 
-		if (depthIsReversed ? pos.z + advance.z <= depth : pos.z + advance.z >= depth) {
-			pos += advance * max((depth - pos.z) / advance.z, 0.0); // go back
-			if (level > 0) {
-				level -= level_step;
-			}
-			else {
-				return true;
-			}
+		bool intersects = (
+			(depthIsReversed ? dir.z < 0.0 : dir.z > 0.0) && (depthIsReversed ? pos.z + advance.z <= depth : pos.z + advance.z >= depth) ||
+			(depthIsReversed ? dir.z > 0.0 : dir.z < 0.0) && (depthIsReversed ? pos.z <= depth : pos.z >= depth)
+		);
+
+		if (intersects) {
+			if (level == 0) return true;
+			advance *= max(sign(dir.z)*(depthIsReversed ? -1.0 : 1.0)*(depth - pos.z) / advance.z, 0.0); // to the hit point
 		}
-		else {
-			pos += advance;
-			if (level < last_level) {
-				level += level_step;
-			}
-		}
+
+		pos += advance;
+		level = clamp(level + (intersects ? -level_step : +level_step), 0, last_level);
 	}
 
 	return false;
