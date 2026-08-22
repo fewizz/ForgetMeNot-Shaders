@@ -39,7 +39,6 @@ vec3 fNormalize(in vec3 x) {
 vec4 fNormalize(in vec4 x) {
 	return x * inversesqrt(dot(x, x));
 }
-#define normalize(x) (fNormalize(x))
 
 float pow2(float x) {
 	return (x * x);
