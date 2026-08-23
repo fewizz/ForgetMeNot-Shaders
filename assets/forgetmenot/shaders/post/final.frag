@@ -2,6 +2,8 @@
 #include forgetmenot:shaders/lib/inc/exposure.glsl
 #include forgetmenot:shaders/lib/inc/noise.glsl
 
+#include hdrmod:shaders/globals.glsl
+
 uniform sampler2D u_color;
 uniform sampler2D u_exposure;
 
@@ -148,6 +150,10 @@ void main() {
 		color.g = clamp01(liftGammaGain(color.g, LIFT_B, GAMMA_B, GAIN_B));
 	#endif
 
-	color = clamp01(pow(color, vec3(1.0 / 2.2)));
+	#if defined HDRMOD
+		color *= hdrmod_gamePeakBrightness / hdrmod_gamePaperWhiteBrightness;
+	#endif
+
+	color = pow(color, vec3(1.0 / 2.2));
 	fragColor = vec4(color, 1.0);
 }
