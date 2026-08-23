@@ -2,7 +2,7 @@
 #include forgetmenot:shaders/lib/inc/exposure.glsl
 #include forgetmenot:shaders/lib/inc/noise.glsl
 
-#include hdrmod:shaders/globals.glsl
+#include can-pipe:shaders/compat/hdrmod.glsl
 
 uniform sampler2D u_color;
 uniform sampler2D u_exposure;
