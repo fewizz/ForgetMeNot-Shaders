@@ -34,28 +34,30 @@ vec3 vibrance(vec3 color, float intensity) {
 // http://filmicworlds.com/blog/minimal-color-grading-tools/
 // component-wise
 float liftGammaGain(float color, float lift, float gamma, float gain) {
-    float lerpV = clamp01(pow(color, gamma));
-    color = gain * lerpV + lift * (1.0 - lerpV);
+	float lerpV = clamp01(pow(color, gamma));
+	color = gain * lerpV + lift * (1.0 - lerpV);
 
-    return color;
+	return color;
 }
 
 // Lottes 2016, "Advanced Techniques and Optimization of HDR Color Pipelines"
-vec3 lottes(vec3 x, float whitePoint) {
+// https://www.desmos.com/calculator/rbawjul014
+vec3 lottes(vec3 x, vec2 whitePoint) {
 	const vec3 a = vec3(1.6);
 	const vec3 d = vec3(0.977);
-
-	vec3 hdrMax = vec3(whitePoint);
 
 	const vec3 midIn = vec3(0.18);
 	const vec3 midOut = vec3(0.267);
 
+	vec3 whiteIn = vec3(whitePoint.x);
+	vec3 whiteOut = vec3(whitePoint.y);
+
 	vec3 b =
-		(-pow(midIn, a) + pow(hdrMax, a) * midOut) /
-		((pow(hdrMax, a * d) - pow(midIn, a * d)) * midOut);
+		(pow(whiteIn, a) * midOut - pow(midIn, a) * whiteOut) /
+		((pow(whiteIn, a * d) - pow(midIn, a * d)) * midOut * whiteOut);
 	vec3 c =
-		(pow(hdrMax, a * d) * pow(midIn, a) - pow(hdrMax, a) * pow(midIn, a * d) * midOut) /
-		((pow(hdrMax, a * d) - pow(midIn, a * d)) * midOut);
+		(pow(whiteIn, a * d) * pow(midIn, a) * whiteOut - pow(whiteIn, a) * pow(midIn, a * d) * midOut) /
+		((pow(whiteIn, a * d) - pow(midIn, a * d)) * midOut * whiteOut);
 
 	return pow(x, a) / (pow(x, a * d) * b + c);
 }
@@ -135,13 +137,19 @@ void main() {
 		color = saturation(color, SATURATION);
 	#endif
 
-	#ifndef ACES_TONEMAP
-		color = lottes(color * 0.45, WHITE_POINT);
-	#else
+	#if defined ACES_TONEMAP
 		color = frx_toneMap(color);
+	#else
+		#if defined HDRMOD
+			float peak = hdrmod_gamePeakBrightness / hdrmod_gamePaperWhiteBrightness;
+		#else
+			float peak = 1.0;
+		#endif
+		color = lottes(color * 0.45, vec2(WHITE_POINT, peak));
 	#endif
 
-	#ifdef ENABLE_POST_PROCESSING
+	// TODO
+	#if 0 && defined ENABLE_POST_PROCESSING
 		color = vibrance(color, VIBRANCE);
 
 		// Lift-gamma-gain component-wise
@@ -151,9 +159,12 @@ void main() {
 	#endif
 
 	#if defined HDRMOD
-		color *= hdrmod_gamePeakBrightness / hdrmod_gamePaperWhiteBrightness;
+		color *= hdrmod_gamePaperWhiteBrightness / hdrmod_uiBrightness;
+		color = pow(color, vec3(1.0 / 2.2));  // color = sRGBEncodeSafe(color);
+	#else
+		color = clamp01(color);
+		color = pow(color, vec3(1.0 / 2.2));
 	#endif
 
-	color = pow(color, vec3(1.0 / 2.2));
 	fragColor = vec4(color, 1.0);
 }
