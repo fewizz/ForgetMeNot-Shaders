@@ -62,6 +62,51 @@ vec3 lottes(vec3 x, vec2 whitePoint) {
 	return pow(x, a) / (pow(x, a * d) * b + c);
 }
 
+vec3 bt709ToOklab(vec3 color) {
+	vec3 lms = mat3(
+		0.4122214708f, 0.2119034982f, 0.0883024619f,
+		0.5363325363f, 0.6806995451f, 0.2817188376f,
+		0.0514459929f, 0.1073969566f, 0.6299787005f
+	) * color;
+	lms = pow(abs(lms), vec3(1.0/3.0)) * sign(lms);
+	return mat3(
+		0.2104542553f, 1.9779984951f, 0.0259040371f,
+		0.7936177850f, -2.4285922050f, 0.7827717662f,
+		-0.0040720468f, 0.4505937099f, -0.8086757660f
+	) * lms;
+}
+
+// from https://github.com/clshortfuse/renodx/blob/66f4a40362cd7840bc0647734c434670539addb0/src/shaders/color/oklab.hlsl#L10
+vec3 oklabToBt709(vec3 color) {
+	vec3 lms = mat3(
+		1.f, 1.f, 1.f,
+		0.3963377774f, -0.1055613458f, -0.0894841775f,
+		0.2158037573f, -0.0638541728f, -1.2914855480f
+	) * color;
+	lms = lms * lms * lms;
+	return mat3(
+		4.0767416621f, -1.2684380046f, -0.0041960863f,
+		-3.3077115913f, 2.6097574011f, -0.7034186147f,
+		0.2309699292f, -0.3413193965f, 1.7076147010f
+	) * lms;
+}
+
+
+vec3 sRGB_EncodeSafe(vec3 c) {
+	//Save sign for Wide Color Gamut
+	vec3 s = sign(c);
+	c = abs(c);
+
+	//sRGB
+	bvec3 cutoff = lessThan(c, vec3(0.0031308));
+	vec3 higher = vec3(1.055) * pow(c, vec3(1.0 / 2.4)) - vec3(0.055);
+	vec3 lower = c * vec3(12.92);
+	c = mix(higher, lower, cutoff);
+
+	//Restore Sign
+	return c * s;
+}
+
 void main() {
 	initGlobals();
 
@@ -137,14 +182,29 @@ void main() {
 		color = saturation(color, SATURATION);
 	#endif
 
-	#if defined ACES_TONEMAP
-		color = frx_toneMap(color);
+	#if defined HDRMOD
+		float peak = hdrmod_gamePeakBrightness / hdrmod_gamePaperWhiteBrightness;
 	#else
+		float peak = 1.0;
+	#endif
+
+	#if defined ACES_TONEMAP
 		#if defined HDRMOD
-			float peak = hdrmod_gamePeakBrightness / hdrmod_gamePaperWhiteBrightness;
+			vec3 acesColor = max(frx_toneMap(color), vec3(0.0));
+			color = lottes(color * 0.5, vec2(WHITE_POINT, peak));
+
+			// hue correction
+			// https://github.com/clshortfuse/renodx/blob/66f4a40362cd7840bc0647734c434670539addb0/src/shaders/colorcorrect.hlsl#L163
+			vec3 colorOklab = bt709ToOklab(color);
+			vec3 acesColorOklab = bt709ToOklab(acesColor);
+			colorOklab.yz = acesColorOklab.yz;
+			color = oklabToBt709(colorOklab);
+
+			color = max(color, vec3(0.0));
 		#else
-			float peak = 1.0;
+			color = frx_toneMap(color);
 		#endif
+	#else
 		color = lottes(color * 0.45, vec2(WHITE_POINT, peak));
 	#endif
 
@@ -160,7 +220,7 @@ void main() {
 
 	#if defined HDRMOD
 		color *= hdrmod_gamePaperWhiteBrightness / hdrmod_uiBrightness;
-		color = pow(color, vec3(1.0 / 2.2));  // color = sRGBEncodeSafe(color);
+		color = sRGB_EncodeSafe(color);
 	#else
 		color = clamp01(color);
 		color = pow(color, vec3(1.0 / 2.2));
