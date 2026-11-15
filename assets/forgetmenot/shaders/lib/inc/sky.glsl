@@ -143,7 +143,7 @@ vec3 getValFromMultiScattLUT(sampler2D tex, vec3 pos, vec3 sunDir) {
 
 // Calculates the actual sky-view! It's a lat-long map (or maybe altitude-azimuth is the better term),
 // but the latitude/altitude is non-linear to get more resolution near the horizon.
-const int numScatteringSteps = 32;
+const int numScatteringSteps = 8;
 vec3 raymarchScattering(
 	vec3 pos,
 	vec3 rayDir,
