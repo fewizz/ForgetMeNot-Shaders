@@ -34,11 +34,6 @@ struct CloudLayer {
 CloudLayer createCumulusCloudLayer(in vec3 viewDir) {
 	CloudLayer cloudLayer;
 
-	#ifndef CUMULUS_CLOUDS
-		cloudLayer.render = false;
-		return cloudLayer;
-	#endif
-
 	cloudLayer.altitude = 0.001;
 	cloudLayer.plane = createCloudPlane(viewDir) + 0.00001 * frx_cameraPos.xz / cloudLayer.altitude + 0.00001 * fmn_time / cloudLayer.altitude;
 
@@ -63,16 +58,15 @@ CloudLayer createCumulusCloudLayer(in vec3 viewDir) {
 
 	cloudLayer.render = true;
 
+	#ifndef CUMULUS_CLOUDS
+		cloudLayer.render = false;
+	#endif
+
 	return cloudLayer;
 }
 
 CloudLayer createCirrusCloudLayer(in vec3 viewDir) {
 	CloudLayer cloudLayer;
-
-	#ifndef CIRRUS_CLOUDS
-		cloudLayer.render = false;
-		return cloudLayer;
-	#endif
 
 	cloudLayer.altitude = 0.01;
 	cloudLayer.plane = createCloudPlane(viewDir) + 0.00001 * frx_cameraPos.xz / cloudLayer.altitude;
@@ -97,6 +91,10 @@ CloudLayer createCirrusCloudLayer(in vec3 viewDir) {
 	cloudLayer.curlNoiseFrequency = 0.75;
 
 	cloudLayer.render = true;
+
+	#ifndef CIRRUS_CLOUDS
+		cloudLayer.render = false;
+	#endif
 
 	return cloudLayer;
 }
