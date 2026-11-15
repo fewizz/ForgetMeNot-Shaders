@@ -201,7 +201,7 @@ void main() {
 
 	// ----------------------------------------------------------------------------------------------------
 	// Weather blending (without blending into depth)
-	composite = mix(composite, weatherColor.rgb * 10.0 * frx_luminance(atmosphericColor), weatherColor.a * step(weatherDepth, compositeDepth) * 0.5);
+	composite = mix(composite, weatherColor.rgb * 10.0 * frx_luminance(atmosphericColor), weatherColor.a * (depthIsReversed ? step(-weatherDepth, -compositeDepth) : step(weatherDepth, compositeDepth)) * 0.5);
 
 	// ----------------------------------------------------------------------------------------------------
 	// Writing to buffers
